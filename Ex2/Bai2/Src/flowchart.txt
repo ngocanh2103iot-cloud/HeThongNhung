@@ -1,0 +1,19 @@
+Khởi động
+   ↓
+Cấu hình PA0, PA1, PA2 làm output
+   ↓
+Cấu hình SysTick phát interrupt mỗi 1 ms
+   ↓
+CPU chạy __WFI() → ngủ chờ interrupt
+   ↓
+mỗi 1 ms:
+SysTick interrupt
+   ↓
+SysTick_Handler()
+   ├── đủ 5000 tick → đảo PA0
+   ├── đủ 500 tick  → đảo PA1
+   └── đủ 50 tick   → đảo PA2
+   ↓
+quay lại main
+   ↓
+__WFI()

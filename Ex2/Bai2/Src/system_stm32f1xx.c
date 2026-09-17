@@ -1,82 +1,35 @@
 #include "stm32f1xx.h"
 
-#ifndef HSE_VALUE
-#define HSE_VALUE 8000000U
-#endif
-
-#ifndef HSI_VALUE
-#define HSI_VALUE 8000000U
-#endif
-
-#define SYSCLK_HZ 72000000U
-
-uint32_t SystemCoreClock = SYSCLK_HZ;
-
-const uint8_t AHBPrescTable[16U] = {
-    0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 1U, 2U, 3U, 4U, 6U, 7U, 8U, 9U
-};
-const uint8_t APBPrescTable[8U] = {0U, 0U, 0U, 0U, 1U, 2U, 3U, 4U};
+uint32_t SystemCoreClock = 72000000;
 
 void SystemInit(void)
 {
-    FLASH->ACR = FLASH_ACR_PRFTBE | FLASH_ACR_LATENCY_2;
+    FLASH->ACR = (1 << 4) | 2;
 
-    RCC->CR |= RCC_CR_HSEON;
-    while ((RCC->CR & RCC_CR_HSERDY) == 0U) {
+    RCC->CR |= (1 << 16);
+    while ((RCC->CR & (1 << 17)) == 0) {
     }
 
-    RCC->CFGR &= ~(RCC_CFGR_SW | RCC_CFGR_HPRE | RCC_CFGR_PPRE1 |
-                   RCC_CFGR_PPRE2 | RCC_CFGR_PLLSRC |
-                   RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL);
-    RCC->CFGR |= RCC_CFGR_HPRE_DIV1 | RCC_CFGR_PPRE1_DIV2 |
-                 RCC_CFGR_PPRE2_DIV1 | RCC_CFGR_PLLSRC |
-                 RCC_CFGR_PLLMULL9;
+    RCC->CFGR &= ~((0x3 << 0) | (0xF << 4) | (0x7 << 8) |
+                   (0x7 << 11) | (1 << 16) | (1 << 17) |
+                   (0xF << 18));
+    RCC->CFGR |= (0x4 << 8) | (1 << 16) | (0x7 << 18);
 
-    RCC->CR |= RCC_CR_PLLON;
-    while ((RCC->CR & RCC_CR_PLLRDY) == 0U) {
+    RCC->CR |= (1 << 24);
+    while ((RCC->CR & (1 << 25)) == 0) {
     }
 
-    RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW) | RCC_CFGR_SW_PLL;
-    while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL) {
+    RCC->CFGR &= ~(0x3 << 0);
+    RCC->CFGR |= (0x2 << 0);
+    while ((RCC->CFGR & (0x3 << 2)) != (0x2 << 2)) {
     }
 
-    SystemCoreClock = SYSCLK_HZ;
+    SystemCoreClock = 72000000;
 }
 
 void SystemCoreClockUpdate(void)
 {
-    uint32_t system_clock;
-
-    switch (RCC->CFGR & RCC_CFGR_SWS) {
-    case RCC_CFGR_SWS_HSE:
-        system_clock = HSE_VALUE;
-        break;
-
-    case RCC_CFGR_SWS_PLL: {
-        uint32_t pll_multiplier =
-            ((RCC->CFGR & RCC_CFGR_PLLMULL) >> RCC_CFGR_PLLMULL_Pos) + 2U;
-
-        if ((RCC->CFGR & RCC_CFGR_PLLSRC) != 0U) {
-            uint32_t pll_input = HSE_VALUE;
-
-            if ((RCC->CFGR & RCC_CFGR_PLLXTPRE) != 0U) {
-                pll_input /= 2U;
-            }
-            system_clock = pll_input * pll_multiplier;
-        } else {
-            system_clock = (HSI_VALUE / 2U) * pll_multiplier;
-        }
-        break;
-    }
-
-    case RCC_CFGR_SWS_HSI:
-    default:
-        system_clock = HSI_VALUE;
-        break;
-    }
-
-    SystemCoreClock = system_clock >>
-        AHBPrescTable[(RCC->CFGR & RCC_CFGR_HPRE) >> RCC_CFGR_HPRE_Pos];
+    SystemCoreClock = 72000000;
 }
 
 /* The selected CMSIS startup calls this before main.  This C-only project has

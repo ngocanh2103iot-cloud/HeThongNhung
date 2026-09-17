@@ -2,12 +2,23 @@
 
 static void GPIO_Init(void)
 {
-    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
+    RCC->APB2ENR |= (1 << 2);
 
-    GPIOA->CRL &= ~(GPIO_CRL_MODE0 | GPIO_CRL_CNF0 |
-                    GPIO_CRL_MODE1 | GPIO_CRL_CNF1 |
-                    GPIO_CRL_MODE2 | GPIO_CRL_CNF2);
-    GPIOA->CRL |= GPIO_CRL_MODE0_1 | GPIO_CRL_MODE1_1 | GPIO_CRL_MODE2_1;
+    GPIOA->CRL &= ~(0xF << 0);
+    GPIOA->CRL |= (0x2 << 0);
+
+    GPIOA->CRL &= ~(0xF << 4);
+    GPIOA->CRL |= (0x2 << 4);
+
+    GPIOA->CRL &= ~(0xF << 8);
+    GPIOA->CRL |= (0x2 << 8);
+}
+
+static void SysTick_Init(void)
+{
+    SysTick->LOAD = 72000 - 1;
+    SysTick->VAL = 0;
+    SysTick->CTRL = 7;
 }
 
 void SysTick_Handler(void)
@@ -35,9 +46,8 @@ void SysTick_Handler(void)
 int main(void)
 {
     GPIO_Init();
-    SysTick_Config(SystemCoreClock / 1000U);
+    SysTick_Init();
 
     while (1) {
-        __WFI();
     }
 }
