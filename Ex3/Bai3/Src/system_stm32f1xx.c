@@ -79,8 +79,8 @@ void SystemCoreClockUpdate(void)
         AHBPrescTable[(RCC->CFGR & RCC_CFGR_HPRE) >> RCC_CFGR_HPRE_Pos];
 }
 
-/* The selected CMSIS startup calls this before main.  This C-only project has
- * no static constructors and links without a C runtime library.
+/* Ma khoi dong CMSIS goi ham nay truoc main. Du an khong co ham khoi tao tinh
+ * va khong lien ket thu vien thuc thi C.
  */
 void __libc_init_array(void)
 {

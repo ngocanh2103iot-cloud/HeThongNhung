@@ -32,13 +32,13 @@ static void I2c_Init(void)
     RCC->APB2ENR |= (1 << 3);
     RCC->APB1ENR |= (1 << 21);
 
-    /* PB6: SCL, PB7: SDA, alternate function open-drain. */
+    /* PB6: SCL, PB7: SDA, chuc nang thay the cuc ho. */
     GPIOB->CRL &= ~((0xF << 24) | (0xF << 28));
     GPIOB->CRL |= (0xF << 24) | (0xF << 28);
 
     I2C1->CR1 = 0U;
 
-    /* PCLK1 = 8 MHz, I2C standard mode = 100 kHz. */
+    /* PCLK1 = 8 MHz, I2C chuan 100 kHz. */
     I2C1->CR2 = 8U;
     I2C1->CCR = 40U;
     I2C1->TRISE = 9U;
@@ -381,7 +381,7 @@ uint8_t Bmp280_Init(void)
         return 0U;
     }
 
-    /* Nhiet do x1, ap suat x1, che do normal. */
+    /* Nhiet do x1, ap suat x1, che do binh thuong. */
     return I2c_Write_Register(bmp_address, BMP280_REG_CTRL_MEAS, 0x27U);
 }
 

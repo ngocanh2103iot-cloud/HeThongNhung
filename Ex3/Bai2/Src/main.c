@@ -1,11 +1,11 @@
 #include "stm32f1xx.h"
 #include "max7219.h"
 
-// Animation parameters
+// Tham số chuyển động
 #define ANIM_DELAY_MS  200
-#define TEST_MODE      1    // 0=animation, 1=test patterns
+#define TEST_MODE      1    // 0: chuyển động, 1: mẫu thử
 
-// Heart bitmap (6 rows x 8 cols) - 1 = LED on
+// Hình tim 6 hàng x 8 cột; 1 là LED bật
 static const uint8_t heart[] = {
     0b01100110,  // .##..##.
     0b11111111,  // ########
@@ -15,16 +15,16 @@ static const uint8_t heart[] = {
     0b00011000   // ...##...
 };
 
-// Heart dimensions
+// Kích thước hình tim
 #define HEART_HEIGHT  6
 #define HEART_WIDTH   8
 
-// Animation state
-static int8_t offset_y = 0;       // Vertical offset
-static int8_t direction = 1;      // 1 = down, -1 = up
+// Trạng thái chuyển động
+static int8_t offset_y = 0;       // Độ lệch dọc
+static int8_t direction = 1;      // 1: xuống, -1: lên
 static volatile uint32_t tick_counter = 0;
 
-// Test pattern counter
+// Chỉ số mẫu thử
 static uint8_t test_pattern = 0;
 
 static void GPIO_Init(void)
@@ -41,7 +41,7 @@ void SysTick_Handler(void)
 {
     tick_counter++;
 
-    // Blinking LEDs (existing code)
+    // Nháy LED
     static uint16_t led_01hz_ticks;
     static uint16_t led_1hz_ticks;
     static uint16_t led_10hz_ticks;
@@ -62,21 +62,21 @@ void SysTick_Handler(void)
     }
 }
 
-// Draw heart at vertical offset
+// Vẽ tim theo độ lệch dọc
 static void draw_heart(int8_t offset)
 {
     matrix_clear();
 
-    // Draw each row of heart bitmap
+    // Vẽ từng hàng
     for (uint8_t row = 0; row < HEART_HEIGHT; row++) {
         uint8_t dest_y = row + offset;
 
-        // Boundary check
+        // Bỏ hàng ngoài màn hình
         if (dest_y > 7) continue;
 
         uint8_t bits = heart[row];
 
-        // Draw each column
+        // Vẽ từng cột
         for (uint8_t col = 0; col < HEART_WIDTH; col++) {
             matrix_set(col, dest_y, (bits >> (7 - col)) & 1);
         }
@@ -85,10 +85,10 @@ static void draw_heart(int8_t offset)
     matrix_update();
 }
 
-// Test patterns to determine row mapping
+// Mẫu thử ánh xạ hàng
 static void run_test_pattern(void)
 {
-    // Pattern 0: Fill row 0 only
+    // Mẫu 0: bật hàng 0
     if (test_pattern == 0) {
         matrix_clear();
         for (uint8_t x = 0; x < 8; x++) {
@@ -96,7 +96,7 @@ static void run_test_pattern(void)
         }
         matrix_update();
     }
-    // Pattern 1: Fill row 7 only
+    // Mẫu 1: bật hàng 7
     else if (test_pattern == 1) {
         matrix_clear();
         for (uint8_t x = 0; x < 8; x++) {
@@ -104,37 +104,37 @@ static void run_test_pattern(void)
         }
         matrix_update();
     }
-    // Pattern 2: Draw "TOP" text (row 0-2) to verify Y mapping
+    // Mẫu 2: vẽ "TOP" ở hàng 0-2
     else if (test_pattern == 2) {
         matrix_clear();
-        // T row 0
+        // Chữ T, hàng 0
         matrix_set(0, 0, 1); matrix_set(1, 0, 1); matrix_set(2, 0, 1);
         matrix_set(3, 0, 1); matrix_set(4, 0, 1); matrix_set(5, 0, 1);
         matrix_set(6, 0, 1); matrix_set(7, 0, 1);
-        // O row 1
+        // Chữ O, hàng 1
         matrix_set(0, 1, 1); matrix_set(7, 1, 1);
-        // P row 2
+        // Chữ P, hàng 2
         matrix_set(0, 2, 1); matrix_set(7, 2, 1);
         matrix_update();
     }
-    // Pattern 3: Draw "BOT" text (row 5-7) to verify Y mapping
+    // Mẫu 3: vẽ "BOT" ở hàng 5-7
     else if (test_pattern == 3) {
         matrix_clear();
-        // B row 5
+        // Chữ B, hàng 5
         matrix_set(0, 5, 1); matrix_set(7, 5, 1);
-        // O row 6
+        // Chữ O, hàng 6
         matrix_set(0, 6, 1); matrix_set(7, 6, 1);
-        // T row 7
+        // Chữ T, hàng 7
         matrix_set(0, 7, 1); matrix_set(1, 7, 1); matrix_set(2, 7, 1);
         matrix_set(3, 7, 1); matrix_set(4, 7, 1); matrix_set(5, 7, 1);
         matrix_set(6, 7, 1); matrix_set(7, 7, 1);
         matrix_update();
     }
-    // Pattern 4: Full heart static
+    // Mẫu 4: tim tĩnh
     else if (test_pattern == 4) {
-        draw_heart(1);  // Center the heart
+        draw_heart(1);  // Căn giữa tim
     }
-    // Pattern 5-7: Heart with offset for animation test
+    // Mẫu 5-7: thử độ lệch của tim
     else if (test_pattern == 5) {
         draw_heart(0);
     }
@@ -157,21 +157,21 @@ int main(void)
 
     while (1) {
 #if TEST_MODE
-        // Change test pattern every 2 seconds
+        // Đổi mẫu mỗi 2 giây
         if (tick_counter - last_test_change >= 2000) {
             last_test_change = tick_counter;
             test_pattern = (test_pattern + 1) % 8;
             run_test_pattern();
         }
 #else
-        // Original animation code
+        // Chạy chuyển động
         if (tick_counter >= ANIM_DELAY_MS) {
             tick_counter = 0;
 
-            // Update offset
+            // Cập nhật độ lệch
             offset_y += direction;
 
-            // Bounce at boundaries
+            // Đổi hướng tại biên
             if (offset_y >= 2) {
                 offset_y = 2;
                 direction = -1;

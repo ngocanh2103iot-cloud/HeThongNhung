@@ -18,29 +18,29 @@ typedef void (*isr_handler_t)(void);
 
 
 /*
- * Cortex-M3 Vector Table
+ * Bang vector Cortex-M3
  */
 __attribute__((section(".isr_vector")))
 const isr_handler_t vector_table[] =
 {
-    (isr_handler_t)&_estack,    /* Initial Stack Pointer */
-    Reset_Handler,              /* Reset */
-    Default_Handler,            /* NMI */
-    Default_Handler,            /* HardFault */
-    Default_Handler,            /* MemManage */
-    Default_Handler,            /* BusFault */
-    Default_Handler,            /* UsageFault */
+    (isr_handler_t)&_estack,    /* Con tro ngan xep dau */
+    Reset_Handler,              /* Dat lai */
+    Default_Handler,            /* Ngat khong che */
+    Default_Handler,            /* Loi nghiem trong */
+    Default_Handler,            /* Loi bo nho */
+    Default_Handler,            /* Loi bus */
+    Default_Handler,            /* Loi su dung */
 
     0,
     0,
     0,
     0,
 
-    Default_Handler,            /* SVCall */
-    Default_Handler,            /* Debug Monitor */
+    Default_Handler,            /* Goi dich vu */
+    Default_Handler,            /* Giam sat go loi */
     0,
-    Default_Handler,            /* PendSV */
-    Default_Handler             /* SysTick */
+    Default_Handler,            /* Dich vu cho */
+    Default_Handler             /* Nhip he thong */
 };
 
 
@@ -50,7 +50,7 @@ void Reset_Handler(void)
     uint32_t *dst;
 
     /*
-     * Copy .data từ FLASH -> RAM
+     * Chep .data tu FLASH sang RAM
      */
     src = &_sidata;
     dst = &_sdata;
@@ -61,7 +61,7 @@ void Reset_Handler(void)
     }
 
     /*
-     * Clear .bss
+     * Xoa .bss
      */
     dst = &_sbss;
 
@@ -71,7 +71,7 @@ void Reset_Handler(void)
     }
 
     /*
-     * Run application
+     * Chay ung dung
      */
     main();
 

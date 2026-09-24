@@ -59,7 +59,7 @@ void max7219_init(void)
     GPIOA->CRL |= GPIO_CRL_MODE5_1 | GPIO_CRL_CNF5_1;  // AF đẩy-kéo 2 MHz
     GPIOA->CRL |= GPIO_CRL_MODE7_1 | GPIO_CRL_CNF7_1;  // AF đẩy-kéo 2 MHz
 
-    // SPI1 master, cực tính thấp, lấy mẫu cạnh đầu
+    // SPI1 chế độ chủ, cực tính thấp, lấy mẫu cạnh đầu
     SPI1->CR1 = SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM;
     SPI1->CR1 |= SPI_CR1_SPE;  // Bật SPI
 

@@ -1,10 +1,10 @@
-/* ==================== SECTION 1: INCLUDE ==================== */
+/* ==================== PHAN 1: THU VIEN ==================== */
 
 #include "stm32f1xx.h"
 
 #include <stdint.h>
 
-/* ==================== SECTION 2: BIEN DUNG CHUNG ==================== */
+/* ==================== PHAN 2: BIEN DUNG CHUNG ==================== */
 
 #define UART_BAUD_RATE       9600U
 #define BUTTON_RELEASE_MS    20U
@@ -19,17 +19,17 @@ static volatile uint32_t button_count;
 static volatile uint8_t uart_dma_busy;
 static volatile uint8_t button_is_pressed;
 
-/* ==================== SECTION 3: KHOI TAO NGOAI VI ==================== */
+/* ==================== PHAN 3: KHOI TAO NGOAI VI ==================== */
 
 static void Gpio_Init(void)
 {
     /* APB2ENR: bit 2 IOPAEN, bit 4 IOPCEN, bit 0 AFIOEN. */
     RCC->APB2ENR |= (1 << 2) | (1 << 4) | (1 << 0);
 
-    /* PA9: USART1_TX, alternate-function push-pull, 50 MHz. */
+    /* PA9: USART1_TX, chuc nang thay the day-keo 50 MHz. */
     GPIOA->CRH = (GPIOA->CRH & ~(0xF << 4)) | (0xB << 4);
 
-    /* PC13: input pull-up; nut nhan noi PC13 xuong GND. */
+    /* PC13: ngo vao keo len; nut nhan noi xuong GND. */
     GPIOC->CRH = (GPIOC->CRH & ~(0xF << 20)) | (0x8 << 20);
     GPIOC->BSRR = (1 << 13);
 }
@@ -39,7 +39,7 @@ static void Uart_Init(void)
     /* APB2ENR bit 14: USART1EN. */
     RCC->APB2ENR |= (1 << 14);
 
-    /* PCLK2 = 72 MHz theo SystemInit cua du an, 8 data bits, no parity, 1 stop bit. */
+    /* PCLK2 = 72 MHz, 8 bit du lieu, khong chan le, 1 bit dung. */
     USART1->BRR = (SystemCoreClock + (UART_BAUD_RATE / 2U)) / UART_BAUD_RATE;
     USART1->CR2 = 0U;
     USART1->CR3 = (1 << 7);             /* DMAT */
@@ -52,10 +52,10 @@ static void Dma_Init(void)
 
     DMA1_Channel4->CCR = 0U;
     DMA1_Channel4->CPAR = (uint32_t)(uintptr_t)&USART1->DR;
-    DMA1_Channel4->CCR = (1 << 4) |  /* DIR: memory -> peripheral */
+    DMA1_Channel4->CCR = (1 << 4) |  /* DIR: bo nho sang ngoai vi */
                          (1 << 7) |  /* MINC */
                          (1 << 1) |  /* TCIE */
-                         (1 << 12);  /* PL = medium */
+                         (1 << 12);  /* Uu tien trung binh */
     DMA1->IFCR = (1 << 12);          /* CGIF4 */
 
     NVIC_SetPriority(DMA1_Channel4_IRQn, 1U);
@@ -64,11 +64,11 @@ static void Dma_Init(void)
 
 static void Button_Init(void)
 {
-    /* EXTICR4[7:4] = 0010: noi EXTI13 voi port C. */
+    /* EXTICR4[7:4] = 0010: noi EXTI13 voi cong C. */
     AFIO->EXTICR[3] = (AFIO->EXTICR[3] & ~(0xF << 4)) |
                        (0x2 << 4);
 
-    EXTI->IMR |= (1 << 13);   /* Bo chan ngat line 13. */
+    EXTI->IMR |= (1 << 13);   /* Bo chan ngat duong 13. */
     EXTI->RTSR &= ~(1 << 13); /* Khong bat canh len. */
     EXTI->FTSR |= (1 << 13);  /* Bat canh xuong. */
     EXTI->PR = (1 << 13);     /* Xoa co ngat dang cho. */
@@ -77,7 +77,7 @@ static void Button_Init(void)
     NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
-/* ==================== SECTION 4: GUI DU LIEU ==================== */
+/* ==================== PHAN 4: GUI DU LIEU ==================== */
 
 static uint16_t Format_Button_Message(uint32_t count)
 {
@@ -117,7 +117,7 @@ static void Send_Buffer_DMA(uint16_t length)
     DMA1_Channel4->CCR |= (1 << 0); /* EN = 1 */
 }
 
-/* ==================== SECTION 6: HAM NGAT ==================== */
+/* ==================== PHAN 5: HAM NGAT ==================== */
 
 void SysTick_Handler(void)
 {
@@ -165,7 +165,7 @@ void DMA1_Channel4_IRQHandler(void)
     }
 }
 
-/* ==================== SECTION 7: MAIN ==================== */
+/* ==================== PHAN 6: HAM MAIN ==================== */
 
 int main(void)
 {

@@ -9,7 +9,7 @@ MEMORY
 
 
 /*
- * Stack nằm cuối RAM
+ * Ngan xep o cuoi RAM
  */
 _estack = ORIGIN(RAM) + LENGTH(RAM);
 
@@ -17,8 +17,7 @@ _estack = ORIGIN(RAM) + LENGTH(RAM);
 SECTIONS
 {
     /*
-     * Vector Table
-     * phải nằm đầu FLASH
+     * Bang vector o dau FLASH
      */
     .isr_vector :
     {
@@ -29,7 +28,7 @@ SECTIONS
 
 
     /*
-     * Program code
+     * Ma chuong trinh
      */
     .text :
     {
@@ -70,7 +69,7 @@ SECTIONS
 
 
     /*
-     * Uninitialized data
+     * Du lieu chua khoi tao
      */
     .bss :
     {

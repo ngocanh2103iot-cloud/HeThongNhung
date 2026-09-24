@@ -1,4 +1,4 @@
-/* STM32F103C8T6: 64 KiB flash, 20 KiB SRAM */
+/* STM32F103C8T6: Flash 64 KiB, SRAM 20 KiB */
 ENTRY(Reset_Handler)
 
 MEMORY

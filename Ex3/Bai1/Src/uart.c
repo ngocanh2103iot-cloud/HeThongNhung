@@ -5,11 +5,11 @@ void Uart_Init(void)
 {
     RCC->APB2ENR |= (1 << 2) | (1 << 14);
 
-    /* PA9: USART1_TX, alternate function push-pull 50 MHz. */
+    /* PA9: USART1_TX, chuc nang thay the day-keo 50 MHz. */
     GPIOA->CRH &= ~(0xF << 4);
     GPIOA->CRH |= (0xB << 4);
 
-    /* PCLK2 = 8 MHz, baud = 9600. */
+    /* PCLK2 = 8 MHz, toc do 9600 baud. */
     USART1->BRR = 0x341;
     USART1->CR1 = (1 << 3) | (1 << 13);
 }
