@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Kiến trúc runtime Ex3/Bai3",
+    "output": "architecture.html",
+    "quality_profile": "showcase"
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [28, 88],
+    "cols": 7,
+    "gapX": 44,
+    "gapY": 102,
+    "cellW": 112,
+    "cellH": 64
+  },
+  "components": [
+    { "id": "button", "type": "external", "label": "Nút nhấn", "sublabel": "PC13 → GND", "row": 1, "col": 0 },
+    { "id": "gpio_exti", "type": "backend", "label": "GPIOC / EXTI13", "sublabel": "Pull-up · cạnh xuống", "row": 1, "col": 1 },
+    { "id": "event_logic", "type": "backend", "label": "Xử lý sự kiện", "sublabel": "Ngắt + debounce", "row": 1, "col": 2 },
+    { "id": "message_state", "type": "database", "label": "Bản tin UART", "sublabel": "Đếm · định dạng", "row": 1, "col": 3 },
+    { "id": "dma_tx", "type": "messagebus", "label": "DMA1 Channel 4", "sublabel": "RAM → USART1_DR", "row": 1, "col": 4 },
+    { "id": "usart1", "type": "backend", "label": "USART1 TX", "sublabel": "PA9 · 9600 · 8N1", "row": 1, "col": 5 },
+    { "id": "host_terminal", "type": "external", "label": "USB-TTL + PC", "sublabel": "RXD · picocom", "row": 1, "col": 6 },
+    { "id": "systick", "type": "backend", "label": "SysTick", "sublabel": "Tick 1 ms", "row": 0, "col": 2 },
+    { "id": "clock_tree", "type": "cloud", "label": "Clock tree", "sublabel": "HSE 8 → SYSCLK 72 MHz", "row": 0, "col": 5 }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "STM32F103C8T6 · firmware CMSIS",
+      "wraps": ["gpio_exti", "event_logic", "message_state", "dma_tx", "usart1", "systick", "clock_tree"],
+      "pad": 24
+    },
+    { "kind": "region", "label": "Máy tính người dùng", "wraps": ["host_terminal"], "pad": 18 }
+  ],
+  "connections": [
+    { "id": "button-input", "from": "button", "to": "gpio_exti", "variant": "emphasis" },
+    { "id": "exti-event", "from": "gpio_exti", "to": "event_logic" },
+    { "id": "event-to-message", "from": "event_logic", "to": "message_state" },
+    { "id": "buffer-to-dma", "from": "message_state", "to": "dma_tx", "variant": "emphasis" },
+    { "id": "dma-to-uart", "from": "dma_tx", "to": "usart1" },
+    { "id": "uart-to-host", "from": "usart1", "to": "host_terminal", "variant": "emphasis" },
+    { "id": "tick-to-event", "from": "systick", "to": "event_logic", "label": "20 ms ổn định", "variant": "dashed", "labelAt": [400, 162] },
+    { "id": "clock-to-uart", "from": "clock_tree", "to": "usart1", "label": "PCLK2 72 MHz", "variant": "dashed", "labelAt": [868, 162] }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Luồng dữ liệu chính",
+      "items": [
+        "PC13 tạo cạnh xuống → EXTI15_10_IRQHandler chấp nhận lần nhấn",
+        "button_count tăng một đơn vị và tạo HK01:BTN:<n>\\n\\r",
+        "DMA chuyển buffer RAM đến USART1; PC nhận qua USB-TTL"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Điều phối không chặn",
+      "items": [
+        "main khởi tạo ngoại vi rồi ngủ bằng __WFI()",
+        "SysTick xác nhận nút đã nhả ổn định trong 20 ms",
+        "DMA1_Channel4_IRQHandler xóa TCIF4 và trả uart_dma_busy về 0"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Nền tảng runtime",
+      "items": [
+        "SystemInit: HSE 8 MHz × PLL9 → HCLK/PCLK2 72 MHz",
+        "Startup CMSIS ánh xạ SysTick, EXTI15_10 và DMA1 Channel 4 vào vector table",
+        "Linker: 64 KiB Flash và 20 KiB SRAM cho STM32F103C8T6"
+      ]
+    }
+  ]
+}
