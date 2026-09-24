@@ -46,8 +46,8 @@ void writeReg(byte addr, byte data) {
 }
 
 void max7219Init() {
-  writeReg(REG_DISPLAYTEST, 0x00); // tắt test
-  writeReg(REG_DECODEMODE,  0x00); // không decode (matrix, không 7-seg)
+  writeReg(REG_DISPLAYTEST, 0x00); // tắt kiểm tra
+  writeReg(REG_DECODEMODE,  0x00); // không giải mã
   writeReg(REG_SCANLIMIT,   0x07); // dùng đủ 8 hàng
   writeReg(REG_INTENSITY,   0x08); // sáng 0–15
   writeReg(REG_SHUTDOWN,    0x01); // bật hiển thị
