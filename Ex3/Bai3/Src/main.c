@@ -11,8 +11,8 @@
 #define UART_TX_BUFFER_SIZE  32U
 
 /* Thay hai ID nay theo thong tin cua lop va nhom. */
-#define CLASS_ID  "HK"
-#define GROUP_ID  "01"
+#define CLASS_ID  "ELE1415_02_"
+#define GROUP_ID  "03 "
 
 static char uart_tx_buffer[UART_TX_BUFFER_SIZE];
 static volatile uint32_t button_count;

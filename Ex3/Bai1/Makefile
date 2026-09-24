@@ -1,95 +1,68 @@
-PROJECT = firmware
+PROJECT := stm32
 
-CC      = arm-none-eabi-gcc
-OBJCOPY = arm-none-eabi-objcopy
-SIZE    = arm-none-eabi-size
+CC      := arm-none-eabi-gcc
+OBJCOPY := arm-none-eabi-objcopy
+SIZE    := arm-none-eabi-size
 
-CPU = -mcpu=cortex-m3
-MCU = $(CPU) -mthumb
+BUILD_DIR := Build
+BIN_DIR   := Bin
+LINKER    := Linker/STM32F103C8.ld
 
+C_SOURCES := Src/main.c Src/system_stm32f1xx.c Src/max7219.c
+STARTUP   := Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
+OBJECTS   := $(patsubst Src/%.c,$(BUILD_DIR)/%.o,$(C_SOURCES)) \
+             $(BUILD_DIR)/startup_stm32f103xb.o
+DEPS      := $(patsubst Src/%.c,$(BUILD_DIR)/%.d,$(C_SOURCES))
 
-SRC_DIR    = Src
-BUILD_DIR  = Build
-BIN_DIR    = Bin
-LINKER_DIR = Linker
+CPUFLAGS := -mcpu=cortex-m3 -mthumb
+CMSIS_DIR := Lib/STM32CubeF1/Drivers/CMSIS
+INCLUDES  := -I$(CMSIS_DIR)/Include \
+             -I$(CMSIS_DIR)/Device/ST/STM32F1xx/Include
+CFLAGS   := $(CPUFLAGS) -DSTM32F103xB $(INCLUDES) \
+            -std=gnu11 -O2 -g3 -Wall -Wextra -ffreestanding \
+            -ffunction-sections -fdata-sections -MMD -MP
+LDFLAGS  := $(CPUFLAGS) -T$(LINKER) -nostdlib \
+            -Wl,--gc-sections -Wl,-Map=$(BIN_DIR)/$(PROJECT).map
 
-CMSIS_CORE_DIR   = Lib/STM32CubeF1/Drivers/CMSIS/Core/Include
-CMSIS_DEVICE_DIR = Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include
-SOURCES = \
-	$(SRC_DIR)/main.c \
-	$(SRC_DIR)/bmp280.c \
-	$(SRC_DIR)/uart.c \
-	$(SRC_DIR)/startup.c
+ELF := $(BIN_DIR)/$(PROJECT).elf
+BIN := $(BIN_DIR)/$(PROJECT).bin
+HEX := $(BIN_DIR)/$(PROJECT).hex
 
+.PHONY: all flash flash-stlink clean
 
-OBJECTS = \
-	$(BUILD_DIR)/main.o \
-	$(BUILD_DIR)/bmp280.o \
-	$(BUILD_DIR)/uart.o \
-	$(BUILD_DIR)/startup.o
+all: $(ELF) $(BIN) $(HEX)
+	$(SIZE) $(ELF)
 
+$(ELF): $(OBJECTS) $(LINKER) | $(BIN_DIR)
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
-CFLAGS = \
-	$(MCU) \
-	-O0 \
-	-g3 \
-	-Wall \
-	-Wextra \
-	-ffreestanding \
-	-ffunction-sections \
-	-fdata-sections\
-	-I$(CMSIS_CORE_DIR) \
-    -I$(CMSIS_DEVICE_DIR)\
-	-DSTM32F103xB
-LDFLAGS = \
-	$(MCU) \
-	-T$(LINKER_DIR)/STM32F103C8.ld \
-	-nostdlib \
-	-Wl,--gc-sections \
-	-Wl,-Map=$(BUILD_DIR)/$(PROJECT).map
-
-
-all: directories $(BIN_DIR)/$(PROJECT).bin
-
-
-directories:
-	mkdir -p $(BUILD_DIR)
-	mkdir -p $(BIN_DIR)
-
-
-$(BUILD_DIR)/main.o: $(SRC_DIR)/main.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-
-$(BUILD_DIR)/bmp280.o: $(SRC_DIR)/bmp280.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-
-$(BUILD_DIR)/uart.o: $(SRC_DIR)/uart.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-
-$(BUILD_DIR)/startup.o: $(SRC_DIR)/startup.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-
-$(BIN_DIR)/$(PROJECT).elf: $(OBJECTS)
-	$(CC) $(OBJECTS) $(LDFLAGS) -lgcc -o $@
-	$(SIZE) $@
-
-
-$(BIN_DIR)/$(PROJECT).bin: $(BIN_DIR)/$(PROJECT).elf
+$(BIN): $(ELF)
 	$(OBJCOPY) -O binary $< $@
 
+$(HEX): $(ELF)
+	$(OBJCOPY) -O ihex $< $@
 
-flash: all
-	st-flash write $(BIN_DIR)/$(PROJECT).bin 0x08000000
-	st-flash reset
+$(BUILD_DIR)/%.o: Src/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
+$(BUILD_DIR)/startup_stm32f103xb.o: $(STARTUP) | $(BUILD_DIR)
+	$(CC) $(CPUFLAGS) -c $< -o $@
+
+$(BUILD_DIR) $(BIN_DIR):
+	mkdir -p $@
+
+# Nạp bằng OpenOCD và ST-Link.
+flash: $(ELF)
+	openocd -f interface/stlink.cfg -f target/stm32f1x.cfg \
+		-c "program $(ELF) verify reset exit"
+
+# Cách khác khi đã cài stlink-tools.
+flash-stlink: $(BIN)
+	st-flash --reset write $(BIN) 0x08000000
 
 clean:
-	rm -rf $(BUILD_DIR)/*
-	rm -rf $(BIN_DIR)/*
+	rm -f $(BUILD_DIR)/*.o $(BUILD_DIR)/*.d
+	rm -f $(BIN_DIR)/$(PROJECT).elf $(BIN_DIR)/$(PROJECT).bin \
+	      $(BIN_DIR)/$(PROJECT).hex $(BIN_DIR)/$(PROJECT).map
 
-
-.PHONY: all clean flash directories
+-include $(DEPS)
