@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Luồng dữ liệu ADC 100 Hz — Ex3/Bai4",
+    "output": "Ex3/Bai4/dataflow.html",
+    "viewBox": [1080, 860],
+    "quality_profile": "showcase"
+  },
+  "stages": [
+    { "label": "Nguồn vật lý" },
+    { "label": "Thu nhận" },
+    { "label": "DMA + RAM" },
+    { "label": "Biến đổi + truyền" },
+    { "label": "Thiết bị ngoài" }
+  ],
+  "nodes": [
+    { "id": "potentiometer", "type": "external", "label": "Biến trở", "sublabel": "nguồn analog 0–3,3 V", "tag": "ownership: chưa xác định", "stage": 0, "row": 0, "width": 144 },
+    { "id": "pa0", "type": "security", "label": "PA0 / ADC1_IN0", "sublabel": "ranh giới điện vào MCU", "tag": "analog input", "stage": 1, "row": 0 },
+    { "id": "tim3", "type": "backend", "label": "TIM3 TRGO", "sublabel": "update event 100 Hz", "tag": "72 MHz / 72 / 10000", "stage": 1, "row": 2 },
+    { "id": "adc1", "type": "backend", "label": "ADC1", "sublabel": "lấy mẫu 12 bit theo TRGO", "tag": "ADC clock 12 MHz", "stage": 1, "row": 1 },
+    { "id": "dma1ch1", "type": "messagebus", "label": "DMA1 Channel 1", "sublabel": "chuyển mẫu không cần CPU", "tag": "circular • 16 bit", "stage": 2, "row": 0 },
+    { "id": "adcBuffer", "type": "database", "label": "adc_buffer[100]", "sublabel": "RAM lưu tròn đủ 1 giây", "tag": "2 × 50 mẫu", "stage": 2, "row": 1 },
+    { "id": "halfReady", "type": "messagebus", "label": "HT / TC ready", "sublabel": "nửa buffer an toàn", "tag": "micro-batch 0,5 s", "stage": 2, "row": 2, "width": 128 },
+    { "id": "voltageFormat", "type": "backend", "label": "Đổi ADC → Volt", "sublabel": "raw × 3300 / 4095", "tag": "định dạng x.xxx V", "stage": 3, "row": 1 },
+    { "id": "usart1", "type": "backend", "label": "USART1 TX", "sublabel": "PA9 • 9600 8N1", "tag": "CPU gửi tuần tự", "stage": 3, "row": 2 },
+    { "id": "usbTtl", "type": "security", "label": "USB–TTL", "sublabel": "ranh giới UART ↔ USB", "tag": "ownership: chưa xác định", "stage": 4, "row": 1 },
+    { "id": "pcTerminal", "type": "frontend", "label": "Terminal trên PC", "sublabel": "hiển thị điện áp", "tag": "tool: chưa xác định", "stage": 4, "row": 2, "width": 128 }
+  ],
+  "flows": [
+    { "id": "analogToPin", "from": "potentiometer", "to": "pa0", "label": "điện áp 0–3,3 V", "classification": "STREAM • CLASS: CHƯA RÕ", "variant": "emphasis", "labelAt": [208, 100] },
+    { "id": "pinToAdc", "from": "pa0", "to": "adc1", "label": "analog ADC1_IN0", "classification": "STREAM • MCU", "variant": "emphasis", "labelAt": [315, 200] },
+    { "id": "timerTrigger", "from": "tim3", "to": "adc1", "label": "TRGO 100 sự kiện/s", "classification": "CONTROL STREAM", "variant": "dashed", "labelAt": [315, 428] },
+    { "id": "adcToDma", "from": "adc1", "to": "dma1ch1", "label": "mẫu ADC 12 bit", "classification": "STREAM • 100 mẫu/s", "variant": "emphasis", "labelAt": [423, 220] },
+    { "id": "dmaToRam", "from": "dma1ch1", "to": "adcBuffer", "label": "ghi uint16_t tuần tự", "classification": "STREAM • CIRCULAR", "variant": "emphasis", "labelAt": [530, 200] },
+    { "id": "ramHalfBatch", "from": "adcBuffer", "to": "halfReady", "label": "50 mẫu / 0,5 s", "classification": "MICRO-BATCH • HT/TC", "variant": "emphasis", "labelAt": [530, 314] },
+    { "id": "halfToFormat", "from": "halfReady", "to": "voltageFormat", "label": "nửa buffer ổn định", "classification": "batch • 50 mẫu", "variant": "emphasis" },
+    { "id": "formattedToUart", "from": "voltageFormat", "to": "usart1", "label": "x.xxx V + LF/CR", "classification": "BATCH • 50 dòng", "variant": "emphasis", "labelAt": [745, 314] },
+    { "id": "uartToAdapter", "from": "usart1", "to": "usbTtl", "label": "UART 9600 8N1", "classification": "STREAM • CLASS: CHƯA RÕ", "variant": "emphasis", "labelAt": [852, 220] },
+    { "id": "adapterToPc", "from": "usbTtl", "to": "pcTerminal", "label": "USB serial bytes", "classification": "STREAM • OWNER: CHƯA RÕ", "variant": "emphasis", "labelAt": [960, 314] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Nhịp dữ liệu", "items": ["TIM3 tạo 100 trigger mỗi giây; ADC sinh 100 mẫu mỗi giây.", "DMA lưu tròn 100 mẫu và công bố từng nửa 50 mẫu.", "UART gửi theo micro-batch nên terminal có thể trông gần như liên tục."] },
+    { "dot": "amber", "title": "Biến đổi dữ liệu", "items": ["Mẫu ADC 0–4095 được tham chiếu VREF+ cố định 3,3 V.", "Điện áp mV = raw × 3300 / 4095.", "Consumer nhận chuỗi x.xxx V, mỗi mẫu kết thúc bằng LF rồi CR."] },
+    { "dot": "rose", "title": "Ranh giới và điều chưa biết", "items": ["PA0 là ranh giới điện từ mạch biến trở vào miền STM32.", "PA9 và USB–TTL tạo ranh giới từ MCU sang máy tính.", "Repository không khai báo chủ sở hữu thiết bị hay phân loại nhạy cảm của dữ liệu."] }
+  ]
+}

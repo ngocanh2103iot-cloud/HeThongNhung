@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Kiến trúc thu thập ADC bằng Timer và DMA",
+    "output": "architecture.html",
+    "quality_profile": "showcase"
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [50, 80],
+    "cols": 5,
+    "gapX": 105,
+    "gapY": 90,
+    "cellW": 132,
+    "cellH": 64
+  },
+  "components": [
+    {
+      "id": "potentiometer",
+      "type": "external",
+      "label": "Biến trở",
+      "sublabel": "nguồn analog 0–3.3 V",
+      "row": 1,
+      "col": 0
+    },
+    {
+      "id": "adc1",
+      "type": "backend",
+      "label": "ADC1 / PA0",
+      "sublabel": "ADC1_IN0 · 12 bit",
+      "row": 1,
+      "col": 1
+    },
+    {
+      "id": "tim3",
+      "type": "cloud",
+      "label": "TIM3",
+      "sublabel": "TRGO · 100 Hz",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "dma1_ch1",
+      "type": "messagebus",
+      "label": "DMA1 Channel 1",
+      "sublabel": "ADC → RAM · circular",
+      "row": 1,
+      "col": 2
+    },
+    {
+      "id": "sample_buffer",
+      "type": "database",
+      "label": "Buffer ADC",
+      "sublabel": "100 × uint16_t",
+      "row": 1,
+      "col": 3
+    },
+    {
+      "id": "dma_irq",
+      "type": "backend",
+      "label": "DMA IRQ",
+      "sublabel": "HT + TC",
+      "row": 1,
+      "col": 4
+    },
+    {
+      "id": "main_dispatch",
+      "type": "backend",
+      "label": "Main dispatcher",
+      "sublabel": "chọn nửa buffer an toàn",
+      "row": 2,
+      "col": 4
+    },
+    {
+      "id": "usart1",
+      "type": "backend",
+      "label": "USART1 TX",
+      "sublabel": "PA9 · 9600 8N1",
+      "row": 2,
+      "col": 3
+    },
+    {
+      "id": "usb_ttl",
+      "type": "external",
+      "label": "USB–TTL",
+      "sublabel": "cầu nối serial",
+      "row": 3,
+      "col": 3
+    },
+    {
+      "id": "pc_user",
+      "type": "frontend",
+      "label": "Người dùng / PC",
+      "sublabel": "terminal quan sát mẫu",
+      "row": 3,
+      "col": 2
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Miền tín hiệu vật lý",
+      "wraps": ["potentiometer"],
+      "pad": 18
+    },
+    {
+      "kind": "security-group",
+      "label": "STM32F103C8T6 · firmware sở hữu",
+      "wraps": ["adc1", "tim3", "dma1_ch1", "sample_buffer", "dma_irq", "main_dispatch", "usart1"],
+      "pad": 20
+    },
+    {
+      "kind": "region",
+      "label": "Máy tính người dùng",
+      "wraps": ["pc_user"],
+      "pad": 18
+    }
+  ],
+  "connections": [
+    {
+      "id": "analog_input",
+      "from": "potentiometer",
+      "to": "adc1",
+      "label": "điện áp PA0",
+      "variant": "emphasis"
+    },
+    {
+      "id": "timer_trigger",
+      "from": "tim3",
+      "to": "adc1",
+      "label": "TRGO 100 Hz",
+      "labelAt": [347, 174],
+      "variant": "dashed"
+    },
+    {
+      "id": "adc_dma_request",
+      "from": "adc1",
+      "to": "dma1_ch1",
+      "label": "mẫu 12 bit",
+      "variant": "emphasis"
+    },
+    {
+      "id": "dma_to_ram",
+      "from": "dma1_ch1",
+      "to": "sample_buffer",
+      "label": "DMA circular",
+      "variant": "emphasis"
+    },
+    {
+      "id": "buffer_events",
+      "from": "sample_buffer",
+      "to": "dma_irq",
+      "label": "HT 50 / TC 100"
+    },
+    {
+      "id": "ready_flags",
+      "from": "dma_irq",
+      "to": "main_dispatch",
+      "label": "cờ ready",
+      "labelAt": [1058, 308]
+    },
+    {
+      "id": "ascii_samples",
+      "from": "main_dispatch",
+      "to": "usart1",
+      "label": "số + \\n\\r",
+      "variant": "emphasis"
+    },
+    {
+      "id": "uart_wire",
+      "from": "usart1",
+      "to": "usb_ttl",
+      "label": "UART 9600",
+      "labelAt": [821, 462]
+    },
+    {
+      "id": "usb_serial",
+      "from": "usb_ttl",
+      "to": "pc_user",
+      "label": "USB serial",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Đường dữ liệu chính",
+      "items": [
+        "TIM3 phát TRGO ở 100 Hz; ADC1 lấy một mẫu trên PA0 cho mỗi trigger",
+        "DMA vòng lưu đúng 100 mẫu, tương ứng một giây dữ liệu",
+        "Mỗi mẫu được gửi dưới dạng số ASCII, phân cách bằng \\n\\r"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "An toàn hai nửa buffer",
+      "items": [
+        "Half-transfer công bố mẫu 0–49; Transfer-complete công bố mẫu 50–99",
+        "ISR chỉ đặt cờ; main gửi nửa đã hoàn tất trong khi DMA ghi nửa còn lại",
+        "50 mẫu tối đa khoảng 312.5 ms ở 9600 baud, nhỏ hơn cửa sổ 500 ms"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Phụ thuộc và điều chưa biết",
+      "items": [
+        "Đã biết: STM32F103C8T6, biến trở PA0, USART1 TX PA9, USB–TTL ngoài bo",
+        "Chưa xác định: model USB–TTL, cổng thiết bị trên PC và phần mềm terminal",
+        "Điện áp hiển thị không nằm trên đường chính; giá trị gửi hiện tại là ADC thô 0–4095"
+      ]
+    }
+  ]
+}

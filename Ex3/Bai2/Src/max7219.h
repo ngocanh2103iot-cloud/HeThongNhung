@@ -3,19 +3,19 @@
 
 #include <stdint.h>
 
-// Khởi tạo MAX7219
+// Khoi tao MAX7219
 void max7219_init(void);
 
-// Điều khiển một LED
-void matrix_set(uint8_t x, uint8_t y, uint8_t state);  // 0: tắt, 1: bật
+// Dieu khien mot LED
+void matrix_set(uint8_t x, uint8_t y, uint8_t state);  // 0: tat, 1: bat
 
-// Xóa màn hình
+// Xoa man hinh
 void matrix_clear(void);
 
-// Gửi bộ đệm đến MAX7219 sau khi vẽ
+// Gui bo dem den MAX7219
 void matrix_update(void);
 
-// Gửi dữ liệu thô đến MAX7219
+// Gui du lieu tho den MAX7219
 void max7219_send(uint8_t addr, uint8_t data);
 
 #endif

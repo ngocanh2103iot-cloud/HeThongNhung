@@ -51,12 +51,12 @@ $(BUILD_DIR)/startup_stm32f103xb.o: $(STARTUP) | $(BUILD_DIR)
 $(BUILD_DIR) $(BIN_DIR):
 	mkdir -p $@
 
-# Nạp bằng OpenOCD và ST-Link.
+# Nap bang OpenOCD va ST-Link.
 flash: $(ELF)
 	openocd -f interface/stlink.cfg -f target/stm32f1x.cfg \
 		-c "program $(ELF) verify reset exit"
 
-# Cách khác khi đã cài stlink-tools.
+# Cach khac khi da cai stlink-tools.
 flash-stlink: $(BIN)
 	st-flash --reset write $(BIN) 0x08000000
 
