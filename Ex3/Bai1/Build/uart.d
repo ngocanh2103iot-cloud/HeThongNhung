@@ -1,4 +1,4 @@
-Build/uart.o: Src/uart.c \
+Build/uart.o: ../Common/UART/uart.c \
  Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h \
  Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h \
  Lib/STM32CubeF1/Drivers/CMSIS/Include/core_cm3.h \
@@ -6,7 +6,7 @@ Build/uart.o: Src/uart.c \
  Lib/STM32CubeF1/Drivers/CMSIS/Include/cmsis_compiler.h \
  Lib/STM32CubeF1/Drivers/CMSIS/Include/cmsis_gcc.h \
  Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h \
- Src/uart.h
+ ../Common/UART/uart.h
 Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h:
 Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:
 Lib/STM32CubeF1/Drivers/CMSIS/Include/core_cm3.h:
@@ -14,4 +14,4 @@ Lib/STM32CubeF1/Drivers/CMSIS/Include/cmsis_version.h:
 Lib/STM32CubeF1/Drivers/CMSIS/Include/cmsis_compiler.h:
 Lib/STM32CubeF1/Drivers/CMSIS/Include/cmsis_gcc.h:
 Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h:
-Src/uart.h:
+../Common/UART/uart.h:

@@ -19,8 +19,10 @@ const uint8_t APBPrescTable[8U] = {0U, 0U, 0U, 0U, 1U, 2U, 3U, 4U};
 
 void SystemInit(void)
 {
+    /* Bat prefetch, cho Flash 2 chu ky. */
     FLASH->ACR = FLASH_ACR_PRFTBE | FLASH_ACR_LATENCY_2;
 
+    /* Bat HSE va cho dao dong on dinh. */
     RCC->CR |= RCC_CR_HSEON;
     while ((RCC->CR & RCC_CR_HSERDY) == 0U) {
     }
@@ -28,6 +30,7 @@ void SystemInit(void)
     RCC->CFGR &= ~(RCC_CFGR_SW | RCC_CFGR_HPRE | RCC_CFGR_PPRE1 |
                    RCC_CFGR_PPRE2 | RCC_CFGR_PLLSRC |
                    RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL);
+    /* HSE 8 MHz x 9 = 72 MHz; APB1 = 36 MHz, APB2 = 72 MHz. */
     RCC->CFGR |= RCC_CFGR_HPRE_DIV1 | RCC_CFGR_PPRE1_DIV2 |
                  RCC_CFGR_PPRE2_DIV1 | RCC_CFGR_PLLSRC |
                  RCC_CFGR_PLLMULL9;
@@ -36,6 +39,7 @@ void SystemInit(void)
     while ((RCC->CR & RCC_CR_PLLRDY) == 0U) {
     }
 
+    /* Chuyen clock he thong sang PLL. */
     RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW) | RCC_CFGR_SW_PLL;
     while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL) {
     }
@@ -43,6 +47,7 @@ void SystemInit(void)
     SystemCoreClock = SYSCLK_HZ;
 }
 
+/* Tinh lai clock CPU tu cau hinh RCC hien tai. */
 void SystemCoreClockUpdate(void)
 {
     uint32_t system_clock;
@@ -79,9 +84,7 @@ void SystemCoreClockUpdate(void)
         AHBPrescTable[(RCC->CFGR & RCC_CFGR_HPRE) >> RCC_CFGR_HPRE_Pos];
 }
 
-/* The selected CMSIS startup calls this before main.  This C-only project has
- * no static constructors and links without a C runtime library.
- */
+/* Startup goi truoc main; du an C khong can ham khoi tao tinh. */
 void __libc_init_array(void)
 {
 }

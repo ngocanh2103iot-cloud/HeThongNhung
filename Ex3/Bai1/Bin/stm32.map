@@ -19,7 +19,6 @@ Discarded input sections
  .group         0x00000000        0xc Build/main.o
  .group         0x00000000        0xc Build/main.o
  .group         0x00000000        0xc Build/main.o
- .group         0x00000000        0xc Build/main.o
  .text          0x00000000        0x0 Build/main.o
  .data          0x00000000        0x0 Build/main.o
  .bss           0x00000000        0x0 Build/main.o
@@ -64,7 +63,6 @@ Discarded input sections
  .group         0x00000000        0xc Build/bmp280.o
  .group         0x00000000        0xc Build/bmp280.o
  .group         0x00000000        0xc Build/bmp280.o
- .group         0x00000000        0xc Build/bmp280.o
  .text          0x00000000        0x0 Build/bmp280.o
  .data          0x00000000        0x0 Build/bmp280.o
  .bss           0x00000000        0x0 Build/bmp280.o
@@ -78,7 +76,6 @@ Discarded input sections
  .debug_macro   0x00000000      0xd23 Build/bmp280.o
  .debug_macro   0x00000000     0xe09e Build/bmp280.o
  .debug_macro   0x00000000       0x6d Build/bmp280.o
- .debug_macro   0x00000000       0x28 Build/bmp280.o
  .comment       0x00000000       0x27 Build/bmp280.o
  .group         0x00000000        0xc Build/uart.o
  .group         0x00000000        0xc Build/uart.o
@@ -434,46 +431,45 @@ LOAD linker stubs
  .debug_rnglists
                 0x0000013d       0x9d /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_udivmoddi4.o)
 
-.debug_macro    0x00000000    0x10050
- .debug_macro   0x00000000       0x96 Build/main.o
- .debug_macro   0x00000096      0xac0 Build/main.o
- .debug_macro   0x00000b56       0x2e Build/main.o
- .debug_macro   0x00000b84       0x22 Build/main.o
- .debug_macro   0x00000ba6      0x34e Build/main.o
- .debug_macro   0x00000ef4       0x1c Build/main.o
- .debug_macro   0x00000f10       0x22 Build/main.o
- .debug_macro   0x00000f32       0xbd Build/main.o
- .debug_macro   0x00000fef      0xd23 Build/main.o
- .debug_macro   0x00001d12     0xe09e Build/main.o
- .debug_macro   0x0000fdb0       0x6d Build/main.o
- .debug_macro   0x0000fe1d       0x28 Build/main.o
- .debug_macro   0x0000fe45       0x85 Build/system_stm32f1xx.o
- .debug_macro   0x0000feca       0x8c Build/bmp280.o
- .debug_macro   0x0000ff56       0x7d Build/uart.o
- .debug_macro   0x0000ffd3       0x7d Build/i2c.o
+.debug_macro    0x00000000    0x1001e
+ .debug_macro   0x00000000       0x91 Build/main.o
+ .debug_macro   0x00000091      0xac0 Build/main.o
+ .debug_macro   0x00000b51       0x2e Build/main.o
+ .debug_macro   0x00000b7f       0x22 Build/main.o
+ .debug_macro   0x00000ba1      0x34e Build/main.o
+ .debug_macro   0x00000eef       0x1c Build/main.o
+ .debug_macro   0x00000f0b       0x22 Build/main.o
+ .debug_macro   0x00000f2d       0xbd Build/main.o
+ .debug_macro   0x00000fea      0xd23 Build/main.o
+ .debug_macro   0x00001d0d     0xe09e Build/main.o
+ .debug_macro   0x0000fdab       0x6d Build/main.o
+ .debug_macro   0x0000fe18       0x85 Build/system_stm32f1xx.o
+ .debug_macro   0x0000fe9d       0x87 Build/bmp280.o
+ .debug_macro   0x0000ff24       0x7d Build/uart.o
+ .debug_macro   0x0000ffa1       0x7d Build/i2c.o
 
-.debug_line     0x00000000     0x1b43
- .debug_line    0x00000000      0x203 Build/main.o
- .debug_line    0x00000203      0x2ab Build/system_stm32f1xx.o
- .debug_line    0x000004ae      0x4bb Build/bmp280.o
- .debug_line    0x00000969      0x496 Build/uart.o
- .debug_line    0x00000dff      0x6a6 Build/i2c.o
- .debug_line    0x000014a5       0x78 Build/startup_stm32f103xb.o
- .debug_line    0x0000151d       0x6c /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_aeabi_ldivmod.o)
- .debug_line    0x00001589      0x570 /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_udivmoddi4.o)
- .debug_line    0x00001af9       0x4a /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_dvmd_tls.o)
+.debug_line     0x00000000     0x1b85
+ .debug_line    0x00000000      0x220 Build/main.o
+ .debug_line    0x00000220      0x2ad Build/system_stm32f1xx.o
+ .debug_line    0x000004cd      0x4c9 Build/bmp280.o
+ .debug_line    0x00000996      0x4a1 Build/uart.o
+ .debug_line    0x00000e37      0x6b0 Build/i2c.o
+ .debug_line    0x000014e7       0x78 Build/startup_stm32f103xb.o
+ .debug_line    0x0000155f       0x6c /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_aeabi_ldivmod.o)
+ .debug_line    0x000015cb      0x570 /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_udivmoddi4.o)
+ .debug_line    0x00001b3b       0x4a /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_dvmd_tls.o)
 
-.debug_str      0x00000000    0x54a96
- .debug_str     0x00000000    0x54a96 Build/main.o
-                              0x54303 (size before relaxing)
- .debug_str     0x00054a96    0x542f5 Build/system_stm32f1xx.o
- .debug_str     0x00054a96    0x5437d Build/bmp280.o
- .debug_str     0x00054a96    0x542ca Build/uart.o
- .debug_str     0x00054a96    0x5428f Build/i2c.o
- .debug_str     0x00054a96       0xa8 Build/startup_stm32f103xb.o
- .debug_str     0x00054a96       0x9f /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_aeabi_ldivmod.o)
- .debug_str     0x00054a96      0x67d /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_udivmoddi4.o)
- .debug_str     0x00054a96       0xbf /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_dvmd_tls.o)
+.debug_str      0x00000000    0x54a2e
+ .debug_str     0x00000000    0x54a2e Build/main.o
+                              0x54286 (size before relaxing)
+ .debug_str     0x00054a2e    0x542f5 Build/system_stm32f1xx.o
+ .debug_str     0x00054a2e    0x54300 Build/bmp280.o
+ .debug_str     0x00054a2e    0x542d5 Build/uart.o
+ .debug_str     0x00054a2e    0x54299 Build/i2c.o
+ .debug_str     0x00054a2e       0xa8 Build/startup_stm32f103xb.o
+ .debug_str     0x00054a2e       0x9f /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_aeabi_ldivmod.o)
+ .debug_str     0x00054a2e      0x67d /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_udivmoddi4.o)
+ .debug_str     0x00054a2e       0xbf /usr/lib/gcc/arm-none-eabi/13.2.1/thumb/v7-m/nofp/libgcc.a(_dvmd_tls.o)
 
 .debug_frame    0x00000000      0x2c8
  .debug_frame   0x00000000       0x28 Build/main.o

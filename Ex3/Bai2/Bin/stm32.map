@@ -345,18 +345,18 @@ LOAD linker stubs
  .debug_macro   0x0000fe93       0x87 Build/max7219.o
  .debug_macro   0x0000ff1a       0x7d Build/spi.o
 
-.debug_line     0x00000000      0xd25
- .debug_line    0x00000000      0x1cf Build/main.o
- .debug_line    0x000001cf      0x2ab Build/system_stm32f1xx.o
- .debug_line    0x0000047a      0x64c Build/max7219.o
- .debug_line    0x00000ac6      0x25f Build/spi.o
+.debug_line     0x00000000      0xd4b
+ .debug_line    0x00000000      0x1dd Build/main.o
+ .debug_line    0x000001dd      0x2ab Build/system_stm32f1xx.o
+ .debug_line    0x00000488      0x65a Build/max7219.o
+ .debug_line    0x00000ae2      0x269 Build/spi.o
 
-.debug_str      0x00000000    0x541ef
- .debug_str     0x00000000    0x541ef Build/main.o
+.debug_str      0x00000000    0x541f9
+ .debug_str     0x00000000    0x541f9 Build/main.o
                               0x5420d (size before relaxing)
- .debug_str     0x000541ef    0x542f5 Build/system_stm32f1xx.o
- .debug_str     0x000541ef    0x542af Build/max7219.o
- .debug_str     0x000541ef    0x54265 Build/spi.o
+ .debug_str     0x000541f9    0x542f5 Build/system_stm32f1xx.o
+ .debug_str     0x000541f9    0x542af Build/max7219.o
+ .debug_str     0x000541f9    0x5426f Build/spi.o
 
 .debug_frame    0x00000000      0x164
  .debug_frame   0x00000000       0x30 Build/main.o

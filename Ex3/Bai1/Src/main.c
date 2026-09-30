@@ -8,7 +8,6 @@ static void Systick_Init(void)
 {
     SysTick->LOAD = 9000000 - 1;
     SysTick->VAL = 0;
-    /* CLKSOURCE = 0: clock CPU/8; ENABLE (bit 0): bat dem. */
     SysTick->CTRL = (1 << 0);
 }
 
@@ -17,6 +16,7 @@ int main(void)
     int32_t temperature;
     uint32_t pressure;
 
+    /* Khoi tao giao tiep cam bien va cong gui ket qua. */
     I2c_Init();
     Uart_Init();
 
@@ -40,6 +40,7 @@ int main(void)
         while ((SysTick->CTRL & (1 << 16)) == 0)
         {
         }
+        /* Doc ket qua da bu va gui qua UART. */
         Bmp280_Read(&temperature, &pressure);
         Uart_Send_String("Temperature: ");
         Uart_Send_Fixed(temperature, 2U);

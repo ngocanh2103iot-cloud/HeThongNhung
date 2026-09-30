@@ -1,4 +1,4 @@
-Build/bmp280.o: Src/bmp280.c Src/bmp280.h Src/i2c.h \
+Build/bmp280.o: Src/bmp280.c Src/bmp280.h ../Common/I2C/i2c.h \
  Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h \
  Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h \
  Lib/STM32CubeF1/Drivers/CMSIS/Include/core_cm3.h \
@@ -7,7 +7,7 @@ Build/bmp280.o: Src/bmp280.c Src/bmp280.h Src/i2c.h \
  Lib/STM32CubeF1/Drivers/CMSIS/Include/cmsis_gcc.h \
  Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h
 Src/bmp280.h:
-Src/i2c.h:
+../Common/I2C/i2c.h:
 Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h:
 Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:
 Lib/STM32CubeF1/Drivers/CMSIS/Include/core_cm3.h:
