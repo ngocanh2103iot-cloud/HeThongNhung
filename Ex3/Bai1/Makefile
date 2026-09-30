@@ -8,14 +8,14 @@ BUILD_DIR := Build
 BIN_DIR   := Bin
 LINKER    := Linker/STM32F103C8.ld
 
-C_SOURCES := Src/main.c Src/system_stm32f1xx.c Src/max7219.c
-STARTUP   := Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
+CMSIS_DIR := Lib/STM32CubeF1/Drivers/CMSIS
+C_SOURCES := Src/main.c Src/system_stm32f1xx.c Src/bmp280.c Src/uart.c Src/i2c.c
+ASM_SOURCE := $(CMSIS_DIR)/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
 OBJECTS   := $(patsubst Src/%.c,$(BUILD_DIR)/%.o,$(C_SOURCES)) \
              $(BUILD_DIR)/startup_stm32f103xb.o
 DEPS      := $(patsubst Src/%.c,$(BUILD_DIR)/%.d,$(C_SOURCES))
 
 CPUFLAGS := -mcpu=cortex-m3 -mthumb
-CMSIS_DIR := Lib/STM32CubeF1/Drivers/CMSIS
 INCLUDES  := -I$(CMSIS_DIR)/Include \
              -I$(CMSIS_DIR)/Device/ST/STM32F1xx/Include
 CFLAGS   := $(CPUFLAGS) -DSTM32F103xB $(INCLUDES) \
@@ -34,7 +34,7 @@ all: $(ELF) $(BIN) $(HEX)
 	$(SIZE) $(ELF)
 
 $(ELF): $(OBJECTS) $(LINKER) | $(BIN_DIR)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(CC) $(OBJECTS) $(LDFLAGS) -lgcc -o $@
 
 $(BIN): $(ELF)
 	$(OBJCOPY) -O binary $< $@
@@ -45,8 +45,8 @@ $(HEX): $(ELF)
 $(BUILD_DIR)/%.o: Src/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/startup_stm32f103xb.o: $(STARTUP) | $(BUILD_DIR)
-	$(CC) $(CPUFLAGS) -c $< -o $@
+$(BUILD_DIR)/startup_stm32f103xb.o: $(ASM_SOURCE) | $(BUILD_DIR)
+	$(CC) $(CPUFLAGS) -g3 -c $< -o $@
 
 $(BUILD_DIR) $(BIN_DIR):
 	mkdir -p $@

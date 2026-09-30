@@ -1,0 +1,40 @@
+I2C(Inter-Integrated Circuit)
+ SDA: Serial Data 
+ SCL: Serial Clock 
+SCL Low: SDA duoc phep thay doi
+SDA High: SDA on dinh
+START: Tai High cua SCL, SDA High->Low
+STOP: Tai High cua SCL, SDA Low->High
+Moi byte I2C co 9bit: 8bit tu master + 1bit tu slave(ACK/NACK)
+Moi Slave Address co 7bit
+Init:
+    Enable the clock to I2C module and the GPIO using APB1ENR and APB2ENR,
+    Configure I2C pins as alternate function open-drain output,
+    Initialize the FREQ field of CR2 with the PCLK frequency,
+    Initialize CCR to make proper baud rate in master mode,
+    Initialize the TRISE register,
+    Enable the I2C module by setting the PE bit of CCR1.
+Sending data:
+    Check the busy flag of SR2 to make sure the bus is not busy.
+    Set the START bit of CR1 to make a start condition.
+    Monitor the SB bit of SR1 until the start condition is generated.
+    Put the slave address in the data register (DR). Bits 1 to 7 should
+    contain the slave address and the bit 0 is R/W. To send data the
+    R/W needs to be 0.
+    Monitor the status registers. If the address is sent successfully the
+    ADDR flag sets and you can continue the progress. If the ARLO
+    (Arbitration Lost) is set, you should wait until the bus becomes free
+    and you should repeat steps 1 to 5.
+    Load the data register with the data to be sent.
+    Monitor the TxE flag. The flag is set when an ACK is received.
+    Repeat steps 6 and 7 if you have more bytes to send. Otherwise, set
+    the STOP bit of CR1 to make a stop condition
+Nếu đọc 0xD0 → nhận 0x58
+→ STM32 I2C init OK
+→ wiring OK
+→ address 0x76/0x77 OK
+→ START OK
+→ WRITE OK
+→ repeated START OK
+→ READ OK
+→ BMP280 đang phản hồi
