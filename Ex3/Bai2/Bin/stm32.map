@@ -58,10 +58,14 @@ Discarded input sections
  .text          0x00000000        0x0 Build/max7219.o
  .data          0x00000000        0x0 Build/max7219.o
  .bss           0x00000000        0x0 Build/max7219.o
- .text.matrix_on
-                0x00000000       0x20 Build/max7219.o
- .text.matrix_off
-                0x00000000       0x24 Build/max7219.o
+ .text.Max7219_SendData
+                0x00000000       0x34 Build/max7219.o
+ .text.Max7219_Set
+                0x00000000       0x38 Build/max7219.o
+ .text.Max7219_Clear
+                0x00000000       0x10 Build/max7219.o
+ .text.Max7219_Update
+                0x00000000       0x48 Build/max7219.o
  .debug_macro   0x00000000      0xac0 Build/max7219.o
  .debug_macro   0x00000000      0x34e Build/max7219.o
  .debug_macro   0x00000000       0x2e Build/max7219.o
@@ -73,6 +77,30 @@ Discarded input sections
  .debug_macro   0x00000000     0xe09e Build/max7219.o
  .debug_macro   0x00000000       0x6d Build/max7219.o
  .comment       0x00000000       0x27 Build/max7219.o
+ .group         0x00000000        0xc Build/spi.o
+ .group         0x00000000        0xc Build/spi.o
+ .group         0x00000000        0xc Build/spi.o
+ .group         0x00000000        0xc Build/spi.o
+ .group         0x00000000        0xc Build/spi.o
+ .group         0x00000000        0xc Build/spi.o
+ .group         0x00000000        0xc Build/spi.o
+ .group         0x00000000        0xc Build/spi.o
+ .group         0x00000000        0xc Build/spi.o
+ .group         0x00000000        0xc Build/spi.o
+ .text          0x00000000        0x0 Build/spi.o
+ .data          0x00000000        0x0 Build/spi.o
+ .bss           0x00000000        0x0 Build/spi.o
+ .debug_macro   0x00000000      0xac0 Build/spi.o
+ .debug_macro   0x00000000       0x2e Build/spi.o
+ .debug_macro   0x00000000       0x22 Build/spi.o
+ .debug_macro   0x00000000      0x34e Build/spi.o
+ .debug_macro   0x00000000       0x1c Build/spi.o
+ .debug_macro   0x00000000       0x22 Build/spi.o
+ .debug_macro   0x00000000       0xbd Build/spi.o
+ .debug_macro   0x00000000      0xd23 Build/spi.o
+ .debug_macro   0x00000000     0xe09e Build/spi.o
+ .debug_macro   0x00000000       0x6d Build/spi.o
+ .comment       0x00000000       0x27 Build/spi.o
  .text          0x00000000       0x14 Build/startup_stm32f103xb.o
  .data          0x00000000        0x0 Build/startup_stm32f103xb.o
  .bss           0x00000000        0x0 Build/startup_stm32f103xb.o
@@ -89,6 +117,7 @@ Linker script and memory map
 LOAD Build/main.o
 LOAD Build/system_stm32f1xx.o
 LOAD Build/max7219.o
+LOAD Build/spi.o
 LOAD Build/startup_stm32f103xb.o
                 0x20005000                        _estack = (ORIGIN (RAM) + LENGTH (RAM))
 
@@ -99,163 +128,142 @@ LOAD Build/startup_stm32f103xb.o
                 0x08000000                g_pfnVectors
                 0x0800010c                        . = ALIGN (0x4)
 
-.text           0x0800010c      0x3d4
+.text           0x0800010c      0x348
                 0x0800010c                        . = ALIGN (0x4)
  *(.text*)
- .text.draw_heart
-                0x0800010c       0x60 Build/main.o
- .text.SysTick_Handler
-                0x0800016c       0x80 Build/main.o
-                0x0800016c                SysTick_Handler
  .text.startup.main
-                0x080001ec       0xb8 Build/main.o
-                0x080001ec                main
+                0x0800010c       0x48 Build/main.o
+                0x0800010c                main
  .text.SystemInit
-                0x080002a4       0x70 Build/system_stm32f1xx.o
-                0x080002a4                SystemInit
+                0x08000154       0x70 Build/system_stm32f1xx.o
+                0x08000154                SystemInit
  .text.__libc_init_array
-                0x08000314        0x4 Build/system_stm32f1xx.o
-                0x08000314                __libc_init_array
- .text.max7219_send
-                0x08000318       0x70 Build/max7219.o
-                0x08000318                max7219_send
- .text.max7219_init
-                0x08000388       0xa4 Build/max7219.o
-                0x08000388                max7219_init
- .text.matrix_update
-                0x0800042c       0x1c Build/max7219.o
-                0x0800042c                matrix_update
- .text.matrix_set
-                0x08000448       0x34 Build/max7219.o
-                0x08000448                matrix_set
- .text.matrix_clear
-                0x0800047c       0x10 Build/max7219.o
-                0x0800047c                matrix_clear
+                0x080001c4        0x4 Build/system_stm32f1xx.o
+                0x080001c4                __libc_init_array
+ .text.Max7219_Init
+                0x080001c8       0xfc Build/max7219.o
+                0x080001c8                Max7219_Init
+ .text.Max7219_Heart
+                0x080002c4       0xa8 Build/max7219.o
+                0x080002c4                Max7219_Heart
+ .text.Spi_Init
+                0x0800036c       0x78 Build/spi.o
+                0x0800036c                Spi_Init
+ .text.Spi_TransferByte
+                0x080003e4       0x1c Build/spi.o
+                0x080003e4                Spi_TransferByte
  .text.Reset_Handler
-                0x0800048c       0x48 Build/startup_stm32f103xb.o
-                0x0800048c                Reset_Handler
+                0x08000400       0x48 Build/startup_stm32f103xb.o
+                0x08000400                Reset_Handler
  .text.Default_Handler
-                0x080004d4        0x2 Build/startup_stm32f103xb.o
-                0x080004d4                RTC_Alarm_IRQHandler
-                0x080004d4                EXTI2_IRQHandler
-                0x080004d4                DebugMon_Handler
-                0x080004d4                TIM1_CC_IRQHandler
-                0x080004d4                HardFault_Handler
-                0x080004d4                PVD_IRQHandler
-                0x080004d4                PendSV_Handler
-                0x080004d4                NMI_Handler
-                0x080004d4                EXTI3_IRQHandler
-                0x080004d4                EXTI0_IRQHandler
-                0x080004d4                I2C2_EV_IRQHandler
-                0x080004d4                UsageFault_Handler
-                0x080004d4                ADC1_2_IRQHandler
-                0x080004d4                SPI1_IRQHandler
-                0x080004d4                TAMPER_IRQHandler
-                0x080004d4                DMA1_Channel4_IRQHandler
-                0x080004d4                USART3_IRQHandler
-                0x080004d4                RTC_IRQHandler
-                0x080004d4                DMA1_Channel7_IRQHandler
-                0x080004d4                CAN1_RX1_IRQHandler
-                0x080004d4                TIM4_IRQHandler
-                0x080004d4                I2C1_EV_IRQHandler
-                0x080004d4                DMA1_Channel6_IRQHandler
-                0x080004d4                TIM3_IRQHandler
-                0x080004d4                RCC_IRQHandler
-                0x080004d4                TIM1_TRG_COM_IRQHandler
-                0x080004d4                DMA1_Channel1_IRQHandler
-                0x080004d4                Default_Handler
-                0x080004d4                EXTI15_10_IRQHandler
-                0x080004d4                EXTI9_5_IRQHandler
-                0x080004d4                SPI2_IRQHandler
-                0x080004d4                MemManage_Handler
-                0x080004d4                SVC_Handler
-                0x080004d4                DMA1_Channel5_IRQHandler
-                0x080004d4                EXTI4_IRQHandler
-                0x080004d4                USB_LP_CAN1_RX0_IRQHandler
-                0x080004d4                USB_HP_CAN1_TX_IRQHandler
-                0x080004d4                DMA1_Channel3_IRQHandler
-                0x080004d4                TIM1_UP_IRQHandler
-                0x080004d4                WWDG_IRQHandler
-                0x080004d4                TIM2_IRQHandler
-                0x080004d4                TIM1_BRK_IRQHandler
-                0x080004d4                EXTI1_IRQHandler
-                0x080004d4                USART2_IRQHandler
-                0x080004d4                I2C2_ER_IRQHandler
-                0x080004d4                DMA1_Channel2_IRQHandler
-                0x080004d4                CAN1_SCE_IRQHandler
-                0x080004d4                FLASH_IRQHandler
-                0x080004d4                BusFault_Handler
-                0x080004d4                USART1_IRQHandler
-                0x080004d4                I2C1_ER_IRQHandler
-                0x080004d4                USBWakeUp_IRQHandler
+                0x08000448        0x2 Build/startup_stm32f103xb.o
+                0x08000448                RTC_Alarm_IRQHandler
+                0x08000448                EXTI2_IRQHandler
+                0x08000448                DebugMon_Handler
+                0x08000448                TIM1_CC_IRQHandler
+                0x08000448                HardFault_Handler
+                0x08000448                SysTick_Handler
+                0x08000448                PVD_IRQHandler
+                0x08000448                PendSV_Handler
+                0x08000448                NMI_Handler
+                0x08000448                EXTI3_IRQHandler
+                0x08000448                EXTI0_IRQHandler
+                0x08000448                I2C2_EV_IRQHandler
+                0x08000448                UsageFault_Handler
+                0x08000448                ADC1_2_IRQHandler
+                0x08000448                SPI1_IRQHandler
+                0x08000448                TAMPER_IRQHandler
+                0x08000448                DMA1_Channel4_IRQHandler
+                0x08000448                USART3_IRQHandler
+                0x08000448                RTC_IRQHandler
+                0x08000448                DMA1_Channel7_IRQHandler
+                0x08000448                CAN1_RX1_IRQHandler
+                0x08000448                TIM4_IRQHandler
+                0x08000448                I2C1_EV_IRQHandler
+                0x08000448                DMA1_Channel6_IRQHandler
+                0x08000448                TIM3_IRQHandler
+                0x08000448                RCC_IRQHandler
+                0x08000448                TIM1_TRG_COM_IRQHandler
+                0x08000448                DMA1_Channel1_IRQHandler
+                0x08000448                Default_Handler
+                0x08000448                EXTI15_10_IRQHandler
+                0x08000448                EXTI9_5_IRQHandler
+                0x08000448                SPI2_IRQHandler
+                0x08000448                MemManage_Handler
+                0x08000448                SVC_Handler
+                0x08000448                DMA1_Channel5_IRQHandler
+                0x08000448                EXTI4_IRQHandler
+                0x08000448                USB_LP_CAN1_RX0_IRQHandler
+                0x08000448                USB_HP_CAN1_TX_IRQHandler
+                0x08000448                DMA1_Channel3_IRQHandler
+                0x08000448                TIM1_UP_IRQHandler
+                0x08000448                WWDG_IRQHandler
+                0x08000448                TIM2_IRQHandler
+                0x08000448                TIM1_BRK_IRQHandler
+                0x08000448                EXTI1_IRQHandler
+                0x08000448                USART2_IRQHandler
+                0x08000448                I2C2_ER_IRQHandler
+                0x08000448                DMA1_Channel2_IRQHandler
+                0x08000448                CAN1_SCE_IRQHandler
+                0x08000448                FLASH_IRQHandler
+                0x08000448                BusFault_Handler
+                0x08000448                USART1_IRQHandler
+                0x08000448                I2C1_ER_IRQHandler
+                0x08000448                USBWakeUp_IRQHandler
  *(.rodata*)
- *fill*         0x080004d6        0x2 
- .rodata.heart  0x080004d8        0x6 Build/main.o
+ *fill*         0x0800044a        0x2 
+ .rodata.heart.0
+                0x0800044c        0x8 Build/max7219.o
  *(.glue_7)
- .glue_7        0x080004de        0x0 linker stubs
+ .glue_7        0x08000454        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x080004de        0x0 linker stubs
-                0x080004e0                        . = ALIGN (0x4)
- *fill*         0x080004de        0x2 
-                0x080004e0                        _etext = .
+ .glue_7t       0x08000454        0x0 linker stubs
+                0x08000454                        . = ALIGN (0x4)
+                0x08000454                        _etext = .
 
-.vfp11_veneer   0x080004e0        0x0
- .vfp11_veneer  0x080004e0        0x0 linker stubs
+.vfp11_veneer   0x08000454        0x0
+ .vfp11_veneer  0x08000454        0x0 linker stubs
 
-.v4_bx          0x080004e0        0x0
- .v4_bx         0x080004e0        0x0 linker stubs
+.v4_bx          0x08000454        0x0
+ .v4_bx         0x08000454        0x0 linker stubs
 
-.iplt           0x080004e0        0x0
- .iplt          0x080004e0        0x0 Build/main.o
+.iplt           0x08000454        0x0
+ .iplt          0x08000454        0x0 Build/main.o
 
-.rel.dyn        0x080004e0        0x0
- .rel.iplt      0x080004e0        0x0 Build/main.o
+.rel.dyn        0x08000454        0x0
+ .rel.iplt      0x08000454        0x0 Build/main.o
 
 .ARM.extab
  *(.ARM.extab*)
 
-.ARM.exidx      0x080004e0        0x0
-                0x080004e0                        __exidx_start = .
+.ARM.exidx      0x08000454        0x0
+                0x08000454                        __exidx_start = .
  *(.ARM.exidx*)
-                0x080004e0                        __exidx_end = .
-                0x080004e0                        _sidata = LOADADDR (.data)
+                0x08000454                        __exidx_end = .
+                0x08000454                        _sidata = LOADADDR (.data)
 
-.data           0x20000000        0x8 load address 0x080004e0
+.data           0x20000000        0x4 load address 0x08000454
                 0x20000000                        . = ALIGN (0x4)
                 0x20000000                        _sdata = .
  *(.data*)
- .data.direction
-                0x20000000        0x1 Build/main.o
- *fill*         0x20000001        0x3 
  .data.SystemCoreClock
-                0x20000004        0x4 Build/system_stm32f1xx.o
-                0x20000004                SystemCoreClock
-                0x20000008                        . = ALIGN (0x4)
-                0x20000008                        _edata = .
+                0x20000000        0x4 Build/system_stm32f1xx.o
+                0x20000000                SystemCoreClock
+                0x20000004                        . = ALIGN (0x4)
+                0x20000004                        _edata = .
 
-.igot.plt       0x20000008        0x0 load address 0x080004e8
- .igot.plt      0x20000008        0x0 Build/main.o
+.igot.plt       0x20000004        0x0 load address 0x08000458
+ .igot.plt      0x20000004        0x0 Build/main.o
 
-.bss            0x20000008       0x18 load address 0x080004e8
+.bss            0x20000008        0x8 load address 0x08000458
                 0x20000008                        . = ALIGN (0x4)
                 0x20000008                        _sbss = .
  *(.bss*)
- .bss.led_10hz_ticks.0
-                0x20000008        0x2 Build/main.o
- .bss.led_1hz_ticks.1
-                0x2000000a        0x2 Build/main.o
- .bss.led_01hz_ticks.2
-                0x2000000c        0x2 Build/main.o
- *fill*         0x2000000e        0x2 
- .bss.tick_counter
-                0x20000010        0x4 Build/main.o
- .bss.offset_y  0x20000014        0x1 Build/main.o
- *fill*         0x20000015        0x3 
- .bss.display_buffer
-                0x20000018        0x8 Build/max7219.o
+ .bss.matrix    0x20000008        0x8 Build/max7219.o
+                0x20000008                matrix
  *(COMMON)
-                0x20000020                        . = ALIGN (0x4)
-                0x20000020                        _ebss = .
+                0x20000010                        . = ALIGN (0x4)
+                0x20000010                        _ebss = .
 
 /DISCARD/
  *(.comment)
@@ -271,73 +279,87 @@ LOAD Build/startup_stm32f103xb.o
  .ARM.attributes
                 0x0000005a       0x2d Build/max7219.o
  .ARM.attributes
-                0x00000087       0x21 Build/startup_stm32f103xb.o
+                0x00000087       0x2d Build/spi.o
+ .ARM.attributes
+                0x000000b4       0x21 Build/startup_stm32f103xb.o
 OUTPUT(Bin/stm32.elf elf32-littlearm)
 LOAD linker stubs
 
-.debug_info     0x00000000     0x119b
- .debug_info    0x00000000      0x8e8 Build/main.o
- .debug_info    0x000008e8      0x28f Build/system_stm32f1xx.o
- .debug_info    0x00000b77      0x624 Build/max7219.o
+.debug_info     0x00000000      0xcef
+ .debug_info    0x00000000      0x120 Build/main.o
+ .debug_info    0x00000120      0x28f Build/system_stm32f1xx.o
+ .debug_info    0x000003af      0x70e Build/max7219.o
+ .debug_info    0x00000abd      0x232 Build/spi.o
 
-.debug_abbrev   0x00000000      0x664
- .debug_abbrev  0x00000000      0x2b3 Build/main.o
- .debug_abbrev  0x000002b3      0x11c Build/system_stm32f1xx.o
- .debug_abbrev  0x000003cf      0x295 Build/max7219.o
+.debug_abbrev   0x00000000      0x548
+ .debug_abbrev  0x00000000       0xd9 Build/main.o
+ .debug_abbrev  0x000000d9      0x11c Build/system_stm32f1xx.o
+ .debug_abbrev  0x000001f5      0x27e Build/max7219.o
+ .debug_abbrev  0x00000473       0xd5 Build/spi.o
 
 .debug_loclists
-                0x00000000      0x308
+                0x00000000      0x3bb
  .debug_loclists
-                0x00000000      0x15f Build/main.o
+                0x00000000       0x45 Build/main.o
  .debug_loclists
-                0x0000015f       0x54 Build/system_stm32f1xx.o
+                0x00000045       0x54 Build/system_stm32f1xx.o
  .debug_loclists
-                0x000001b3      0x155 Build/max7219.o
+                0x00000099      0x2f9 Build/max7219.o
+ .debug_loclists
+                0x00000392       0x29 Build/spi.o
 
-.debug_aranges  0x00000000       0xb0
+.debug_aranges  0x00000000       0xc0
  .debug_aranges
-                0x00000000       0x30 Build/main.o
+                0x00000000       0x20 Build/main.o
  .debug_aranges
-                0x00000030       0x30 Build/system_stm32f1xx.o
+                0x00000020       0x30 Build/system_stm32f1xx.o
  .debug_aranges
-                0x00000060       0x50 Build/max7219.o
+                0x00000050       0x48 Build/max7219.o
+ .debug_aranges
+                0x00000098       0x28 Build/spi.o
 
 .debug_rnglists
-                0x00000000      0x12c
+                0x00000000      0x180
  .debug_rnglists
-                0x00000000       0x72 Build/main.o
+                0x00000000       0x1f Build/main.o
  .debug_rnglists
-                0x00000072       0x1f Build/system_stm32f1xx.o
+                0x0000001f       0x1f Build/system_stm32f1xx.o
  .debug_rnglists
-                0x00000091       0x9b Build/max7219.o
+                0x0000003e      0x129 Build/max7219.o
+ .debug_rnglists
+                0x00000167       0x19 Build/spi.o
 
-.debug_macro    0x00000000     0xff18
- .debug_macro   0x00000000       0x8f Build/main.o
- .debug_macro   0x0000008f      0xac0 Build/main.o
- .debug_macro   0x00000b4f       0x2e Build/main.o
- .debug_macro   0x00000b7d       0x22 Build/main.o
- .debug_macro   0x00000b9f      0x34e Build/main.o
- .debug_macro   0x00000eed       0x1c Build/main.o
- .debug_macro   0x00000f09       0x22 Build/main.o
- .debug_macro   0x00000f2b       0xbd Build/main.o
- .debug_macro   0x00000fe8      0xd23 Build/main.o
- .debug_macro   0x00001d0b     0xe09e Build/main.o
- .debug_macro   0x0000fda9       0x6d Build/main.o
- .debug_macro   0x0000fe16       0x85 Build/system_stm32f1xx.o
- .debug_macro   0x0000fe9b       0x7d Build/max7219.o
+.debug_macro    0x00000000     0xff97
+ .debug_macro   0x00000000       0x87 Build/main.o
+ .debug_macro   0x00000087      0xac0 Build/main.o
+ .debug_macro   0x00000b47       0x2e Build/main.o
+ .debug_macro   0x00000b75       0x22 Build/main.o
+ .debug_macro   0x00000b97      0x34e Build/main.o
+ .debug_macro   0x00000ee5       0x1c Build/main.o
+ .debug_macro   0x00000f01       0x22 Build/main.o
+ .debug_macro   0x00000f23       0xbd Build/main.o
+ .debug_macro   0x00000fe0      0xd23 Build/main.o
+ .debug_macro   0x00001d03     0xe09e Build/main.o
+ .debug_macro   0x0000fda1       0x6d Build/main.o
+ .debug_macro   0x0000fe0e       0x85 Build/system_stm32f1xx.o
+ .debug_macro   0x0000fe93       0x87 Build/max7219.o
+ .debug_macro   0x0000ff1a       0x7d Build/spi.o
 
-.debug_line     0x00000000      0xb69
- .debug_line    0x00000000      0x3f1 Build/main.o
- .debug_line    0x000003f1      0x2ab Build/system_stm32f1xx.o
- .debug_line    0x0000069c      0x4cd Build/max7219.o
+.debug_line     0x00000000      0xd25
+ .debug_line    0x00000000      0x1cf Build/main.o
+ .debug_line    0x000001cf      0x2ab Build/system_stm32f1xx.o
+ .debug_line    0x0000047a      0x64c Build/max7219.o
+ .debug_line    0x00000ac6      0x25f Build/spi.o
 
-.debug_str      0x00000000    0x545e2
- .debug_str     0x00000000    0x545e2 Build/main.o
-                              0x5472b (size before relaxing)
- .debug_str     0x000545e2    0x542f5 Build/system_stm32f1xx.o
- .debug_str     0x000545e2    0x542e8 Build/max7219.o
+.debug_str      0x00000000    0x541ef
+ .debug_str     0x00000000    0x541ef Build/main.o
+                              0x5420d (size before relaxing)
+ .debug_str     0x000541ef    0x542f5 Build/system_stm32f1xx.o
+ .debug_str     0x000541ef    0x542af Build/max7219.o
+ .debug_str     0x000541ef    0x54265 Build/spi.o
 
-.debug_frame    0x00000000      0x170
- .debug_frame   0x00000000       0x60 Build/main.o
- .debug_frame   0x00000060       0x40 Build/system_stm32f1xx.o
- .debug_frame   0x000000a0       0xd0 Build/max7219.o
+.debug_frame    0x00000000      0x164
+ .debug_frame   0x00000000       0x30 Build/main.o
+ .debug_frame   0x00000030       0x40 Build/system_stm32f1xx.o
+ .debug_frame   0x00000070       0xb8 Build/max7219.o
+ .debug_frame   0x00000128       0x3c Build/spi.o

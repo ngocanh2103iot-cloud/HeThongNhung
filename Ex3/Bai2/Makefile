@@ -8,7 +8,7 @@ BUILD_DIR := Build
 BIN_DIR   := Bin
 LINKER    := Linker/STM32F103C8.ld
 
-C_SOURCES := Src/main.c Src/system_stm32f1xx.c Src/max7219.c
+C_SOURCES := Src/main.c Src/system_stm32f1xx.c Src/max7219.c Src/spi.c
 STARTUP   := Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
 OBJECTS   := $(patsubst Src/%.c,$(BUILD_DIR)/%.o,$(C_SOURCES)) \
              $(BUILD_DIR)/startup_stm32f103xb.o

@@ -2,20 +2,22 @@
 #define MAX7219_H
 
 #include <stdint.h>
-
+#include "stm32f1xx.h"
+#include "spi.h"
 // Khoi tao MAX7219
-void max7219_init(void);
+void Max7219_Init(void);
 
 // Dieu khien mot LED
-void matrix_set(uint8_t x, uint8_t y, uint8_t state);  // 0: tat, 1: bat
+void Max7219_Set(int x, int y, int state);  // 0: tat, 1: bat
 
 // Xoa man hinh
-void matrix_clear(void);
+void Max7219_Clear(void);
 
 // Gui bo dem den MAX7219
-void matrix_update(void);
+void Max7219_Update(void);
 
 // Gui du lieu tho den MAX7219
-void max7219_send(uint8_t addr, uint8_t data);
+void Max7219_SendData(uint8_t addr, uint8_t data);
 
+void Max7219_Heart(int8_t offset_y);
 #endif

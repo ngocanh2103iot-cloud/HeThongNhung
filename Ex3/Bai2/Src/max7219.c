@@ -1,107 +1,80 @@
 #include "max7219.h"
-#include "stm32f1xx.h"
+void Max7219_SendData(uint8_t addr, uint8_t data){
+    GPIOA->ODR &= ~(1 << 4);
 
-// Bo dem 8 hang, moi bit la mot LED
-static uint8_t display_buffer[8] = {0};
+    Spi_TransferByte(addr);
+    Spi_TransferByte(data);
+    while(SPI1->SR & (1 << 7));
 
-// Tao tre SPI bang phan mem
-static void spi_delay(void)
-{
-    volatile uint32_t i;
-    for (i = 0; i < 10; i++);
+    GPIOA->ODR |= (1 << 4);
 }
+void Max7219_Init(){
+    Max7219_SendData(0x09, 0x00);
+    Max7219_SendData(0x0B, 0x07);
+    Max7219_SendData(0x0A, 0x00);
+    Max7219_SendData(0x0F, 0x00);
 
-// Gui du lieu bang SPI
-static void spi_transmit(uint8_t data)
-{
-    // Cho bo dem truyen trong
-    while (!(SPI1->SR & SPI_SR_TXE));
-    SPI1->DR = data;
-    // Cho truyen xong
-    while (SPI1->SR & SPI_SR_BSY);
+    for (int i=1; i<=8; i++)
+        Max7219_SendData(i, 0x00);
+
+    Max7219_SendData(0x0c, 0x01);
 }
-
-// Dieu khien chan CS
-static void cs_low(void)
+uint8_t matrix[8];
+void Max7219_Set(int x, int y, int state)
 {
-    GPIOA->BRR = GPIO_BRR_BR4;
+    uint8_t row = 7 - x;
+    uint8_t bit = 7 - y;
+    if (state)
+        matrix[row] |= (1 << bit);
+    else
+        matrix[row] &= ~(1 << bit);
 }
-
-static void cs_high(void)
+void Max7219_Clear()
 {
-    GPIOA->BSRR = GPIO_BSRR_BS4;
+    for (int i=0; i<8; i++)
+        matrix[i] = 0;
 }
-
-// Gui lenh 16 bit den MAX7219
-void max7219_send(uint8_t addr, uint8_t data)
-{
-    cs_low();
-    spi_delay();
-    spi_transmit(addr);
-    spi_transmit(data);
-    spi_delay();
-    cs_high();
+void Max7219_Update(){
+    for(int i=0; i<8; i++)
+        Max7219_SendData(i + 1, matrix[i]);
 }
-
-// Khoi tao GPIO va SPI cho MAX7219
-void max7219_init(void)
+void Max7219_Heart(int8_t offset_y)
 {
-    // Cap xung nhip cho SPI1 va GPIOA
-    RCC->APB2ENR |= RCC_APB2ENR_SPI1EN | RCC_APB2ENR_IOPAEN;
+    static const uint8_t heart[8] = {
+        0b00000000,
+        0b01100110,
+        0b11111111,
+        0b11111111,
+        0b11111111,
+        0b01111110,
+        0b00111100,
+        0b00011000
+    };
 
-    // PA4: CS, ngo ra day-keo
-    GPIOA->CRL &= ~(GPIO_CRL_MODE4 | GPIO_CRL_CNF4);
-    GPIOA->CRL |= GPIO_CRL_MODE4_1;  // Ngo ra 2 MHz
-
-    // PA5: SCK, PA7: MOSI, chuc nang thay the day-keo
-    GPIOA->CRL &= ~(GPIO_CRL_MODE5 | GPIO_CRL_CNF5 |
-                    GPIO_CRL_MODE7 | GPIO_CRL_CNF7);
-    GPIOA->CRL |= GPIO_CRL_MODE5_1 | GPIO_CRL_CNF5_1;  // AF day-keo 2 MHz
-    GPIOA->CRL |= GPIO_CRL_MODE7_1 | GPIO_CRL_CNF7_1;  // AF day-keo 2 MHz
-
-    // SPI1 che do chu, cuc tinh thap, lay mau canh dau
-    SPI1->CR1 = SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM;
-    SPI1->CR1 |= SPI_CR1_SPE;  // Bat SPI
-
-    // Cau hinh MAX7219
-    max7219_send(0x09, 0x00);    // Khong giai ma
-    max7219_send(0x0A, 0x07);    // Do sang 0x07
-    max7219_send(0x0B, 0x07);    // Quet du 8 hang
-    max7219_send(0x0C, 0x01);    // Hoat dong binh thuong
-    max7219_send(0x0F, 0x00);    // Tat che do kiem tra
-
-    matrix_clear();
-    matrix_update();
-}
-
-// Cap nhat man hinh tu bo dem
-void matrix_update(void)
-{
-    for (int row = 1; row <= 8; row++) {
-        max7219_send(row, display_buffer[row - 1]);
+    /* Clear buffer trước khi tạo frame mới */
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        matrix[i] = 0x00;
     }
-}
 
-// Dat LED tai (x, y) trong bo dem
-// x: cot, y: hang, trang thai: 0 tat, 1 bat
-void matrix_set(uint8_t x, uint8_t y, uint8_t state)
-{
-    if (x > 7 || y > 7) return;
-    if (state) {
-        display_buffer[y] |= (1 << x);
-    } else {
-        display_buffer[y] &= ~(1 << x);
+    for (uint8_t y = 0; y < 8; y++)
+    {
+        for (uint8_t x = 0; x < 8; x++)
+        {
+            uint8_t state = (heart[y] >> (7 - x)) & 0x01;
+
+            if (state)
+            {
+                int8_t new_y = y + offset_y;
+
+                /* Chỉ vẽ pixel còn nằm trong matrix */
+                if (new_y >= 0 && new_y < 8)
+                {
+                    Max7219_Set(x, new_y, 1);
+                }
+            }
+        }
     }
-}
 
-// Giu tuong thich cu
-void matrix_on(uint8_t x, uint8_t y) { matrix_set(x, y, 1); }
-void matrix_off(uint8_t x, uint8_t y) { matrix_set(x, y, 0); }
-
-// Xoa toan bo LED trong bo dem
-void matrix_clear(void)
-{
-    for (int i = 0; i < 8; i++) {
-        display_buffer[i] = 0;
-    }
+    Max7219_Update();
 }

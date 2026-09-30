@@ -1,0 +1,11 @@
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -DSTM32F103xB -ILib/STM32CubeF1/Drivers/CMSIS/Include -ILib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include -std=gnu11 -O2 -g3 -Wall -Wextra -ffreestanding -ffunction-sections -fdata-sections -MMD -MP -c Src/main.c -o Build/main.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -DSTM32F103xB -ILib/STM32CubeF1/Drivers/CMSIS/Include -ILib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include -std=gnu11 -O2 -g3 -Wall -Wextra -ffreestanding -ffunction-sections -fdata-sections -MMD -MP -c Src/system_stm32f1xx.c -o Build/system_stm32f1xx.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -DSTM32F103xB -ILib/STM32CubeF1/Drivers/CMSIS/Include -ILib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include -std=gnu11 -O2 -g3 -Wall -Wextra -ffreestanding -ffunction-sections -fdata-sections -MMD -MP -c Src/max7219.c -o Build/max7219.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -DSTM32F103xB -ILib/STM32CubeF1/Drivers/CMSIS/Include -ILib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include -std=gnu11 -O2 -g3 -Wall -Wextra -ffreestanding -ffunction-sections -fdata-sections -MMD -MP -c Src/spi.c -o Build/spi.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -c Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s -o Build/startup_stm32f103xb.o
+arm-none-eabi-gcc Build/main.o Build/system_stm32f1xx.o Build/max7219.o Build/spi.o Build/startup_stm32f103xb.o -mcpu=cortex-m3 -mthumb -TLinker/STM32F103C8.ld -nostdlib -Wl,--gc-sections -Wl,-Map=Bin/stm32.map -o Bin/stm32.elf
+arm-none-eabi-objcopy -O binary Bin/stm32.elf Bin/stm32.bin
+arm-none-eabi-objcopy -O ihex Bin/stm32.elf Bin/stm32.hex
+arm-none-eabi-size Bin/stm32.elf
+   text	   data	    bss	    dec	    hex	filename
+   1000	      4	      8	   1012	    3f4	Bin/stm32.elf

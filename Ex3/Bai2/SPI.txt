@@ -1,0 +1,18 @@
+SPI(Serial Peripheral Interface)
+    SDO(Data out)
+    SDI(Data in)
+    SCLK(Shift Clock)
+    CE(Chip Enable)
+Sending and Receiving as Master
+    Enable the clocks for SPI and GPIO.
+    Initialize MOSI and SCK as alternate function output
+    push-pull (CNFx = 10) and make MISO an input pin.
+    Initialize SPI_CR1 with proper value:
+    Consider a GPIO pin for the CE pin
+    Make low the CE pin of the desired slave.
+    Load SP_DR to send data.
+    Monitor the SPI_SR register until the TXE is set (or
+    RXNE is set).
+    Read SP_DR to get the received data.
+    Repeat steps 6 to 8 until all data are transferred.
+    Make the CE pin of the slave device high.
