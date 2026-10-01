@@ -8,9 +8,11 @@ BUILD_DIR := Build
 BIN_DIR   := Bin
 LINKER    := Linker/STM32F103C8.ld
 
-C_SOURCES := Src/main.c Src/system_stm32f1xx.c
+C_SOURCES := Src/main.c Src/system_stm32f1xx.c Src/dma_uart.c
 COMMON_DIR := ../Common
-COMMON_SOURCES := $(wildcard $(COMMON_DIR)/*/*.c)
+COMMON_SOURCES := $(COMMON_DIR)/DELAY/delay.c \
+                  $(COMMON_DIR)/FORMAT/format.c \
+                  $(COMMON_DIR)/UART/uart.c
 COMMON_INCLUDES := $(addprefix -I,$(wildcard $(COMMON_DIR)/*/))
 COMMON_OBJECTS := $(patsubst $(COMMON_DIR)/%.c,$(BUILD_DIR)/Common/%.o,$(COMMON_SOURCES))
 STARTUP   := Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s

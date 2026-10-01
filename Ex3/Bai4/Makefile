@@ -8,7 +8,7 @@ BUILD_DIR := Build
 BIN_DIR   := Bin
 LINKER    := Linker/STM32F103C8.ld
 
-C_SOURCES := Src/main.c Src/system_stm32f1xx.c
+C_SOURCES := Src/main.c Src/system_stm32f1xx.c Src/dma_adc.c Src/timer.c
 COMMON_DIR := ../Common
 COMMON_SOURCES := $(wildcard $(COMMON_DIR)/*/*.c)
 COMMON_INCLUDES := $(addprefix -I,$(wildcard $(COMMON_DIR)/*/))
@@ -21,7 +21,7 @@ DEPS      := $(OBJECTS:.o=.d)
 
 CPUFLAGS := -mcpu=cortex-m3 -mthumb
 CMSIS_DIR := Lib/STM32CubeF1/Drivers/CMSIS
-INCLUDES  := $(COMMON_INCLUDES) -I$(CMSIS_DIR)/Include \
+INCLUDES  := -ISrc $(COMMON_INCLUDES) -I$(CMSIS_DIR)/Include \
              -I$(CMSIS_DIR)/Device/ST/STM32F1xx/Include
 CFLAGS   := $(CPUFLAGS) -DSTM32F103xB $(INCLUDES) \
             -std=gnu11 -O2 -g3 -Wall -Wextra -ffreestanding \
