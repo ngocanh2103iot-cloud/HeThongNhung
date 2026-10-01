@@ -2,14 +2,7 @@
 #include "bmp280.h"
 #include "i2c.h"
 #include "uart.h"
-
-/* SysTick: 72 MHz / 8 = 9 MHz, moi chu ky 1 giay. */
-static void Systick_Init(void)
-{
-    SysTick->LOAD = 9000000 - 1;
-    SysTick->VAL = 0;
-    SysTick->CTRL = (1 << 0);
-}
+#include "delay.h"
 
 int main(void)
 {
@@ -32,14 +25,11 @@ int main(void)
         }
     }
 
-    Systick_Init();
+    Delay_Init();
 
     while (1)
     {
-        /* Cho COUNTFLAG (bit 16), doc va gui ket qua moi giay. */
-        while ((SysTick->CTRL & (1 << 16)) == 0)
-        {
-        }
+        Delay_ms(1000);
         /* Doc ket qua da bu va gui qua UART. */
         Bmp280_Read(&temperature, &pressure);
         Uart_Send_String("Temperature: ");

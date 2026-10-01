@@ -1,0 +1,46 @@
+The following sequence should be followed to configure a DMA channelx (where x is the
+channel number).
+1.Set the peripheral register address in the DMA_CPARx register. The data will be
+moved from/ to this address to/ from the memory after the peripheral event.
+2.Set the memory address in the DMA_CMARx register. The data will be written to or
+read from this memory after the peripheral event.
+3.Configure the total number of data to be transferred in the DMA_CNDTRx register.
+After each peripheral event, this value will be decremented.
+4.Configure the channel priority using the PL[1:0] bits in the DMA_CCRx register
+5.Configure data transfer direction, circular mode, peripheral & memory incremented
+mode, peripheral & memory data size, and interrupt after half and/or full transfer in the
+DMA_CCRx register
+6.Activate the channel by setting the ENABLE bit in the DMA_CCRx register.
+1. Xác định peripheral + direction
+            ↓
+2. Tìm DMA channel mapping
+            ↓
+3. Enable clock DMA
+            ↓
+4. Disable channel trước khi cấu hình
+            ↓
+5. CPAR = peripheral address
+            ↓
+6. CMAR = memory address
+            ↓
+7. CNDTR = number of data
+            ↓
+8. CCR:
+      DIR
+      MINC/PINC
+      MSIZE/PSIZE
+      CIRC
+      PL
+      interrupt
+            ↓
+9. Clear DMA flags cũ
+            ↓
+10. Enable DMA request ở peripheral
+            ↓
+11. Enable DMA channel
+            ↓
+12. Peripheral event
+            ↓
+13. DMA tự transfer
+            ↓
+14. HT / TC / TE

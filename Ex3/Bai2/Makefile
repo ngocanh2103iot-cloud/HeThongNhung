@@ -10,16 +10,18 @@ LINKER    := Linker/STM32F103C8.ld
 
 C_SOURCES := Src/main.c Src/system_stm32f1xx.c Src/max7219.c
 COMMON_DIR := ../Common
-COMMON_SOURCES := $(COMMON_DIR)/SPI/spi.c
+COMMON_SOURCES := $(wildcard $(COMMON_DIR)/*/*.c)
+COMMON_INCLUDES := $(addprefix -I,$(wildcard $(COMMON_DIR)/*/))
+COMMON_OBJECTS := $(patsubst $(COMMON_DIR)/%.c,$(BUILD_DIR)/Common/%.o,$(COMMON_SOURCES))
 STARTUP   := Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
 OBJECTS   := $(patsubst Src/%.c,$(BUILD_DIR)/%.o,$(C_SOURCES)) \
-             $(patsubst %.c,$(BUILD_DIR)/%.o,$(notdir $(COMMON_SOURCES))) \
+             $(COMMON_OBJECTS) \
              $(BUILD_DIR)/startup_stm32f103xb.o
 DEPS      := $(OBJECTS:.o=.d)
 
 CPUFLAGS := -mcpu=cortex-m3 -mthumb
 CMSIS_DIR := Lib/STM32CubeF1/Drivers/CMSIS
-INCLUDES  := -I$(COMMON_DIR)/SPI -I$(CMSIS_DIR)/Include \
+INCLUDES  := $(COMMON_INCLUDES) -I$(CMSIS_DIR)/Include \
              -I$(CMSIS_DIR)/Device/ST/STM32F1xx/Include
 CFLAGS   := $(CPUFLAGS) -DSTM32F103xB $(INCLUDES) \
             -std=gnu11 -O2 -g3 -Wall -Wextra -ffreestanding \
@@ -48,7 +50,8 @@ $(HEX): $(ELF)
 $(BUILD_DIR)/%.o: Src/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/%.o: $(COMMON_DIR)/SPI/%.c | $(BUILD_DIR)
+$(BUILD_DIR)/Common/%.o: $(COMMON_DIR)/%.c
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/startup_stm32f103xb.o: $(STARTUP) | $(BUILD_DIR)
@@ -67,6 +70,7 @@ flash-stlink: $(BIN)
 	st-flash --reset write $(BIN) 0x08000000
 
 clean:
+	rm -f $(COMMON_OBJECTS) $(COMMON_OBJECTS:.o=.d)
 	rm -f $(BUILD_DIR)/*.o $(BUILD_DIR)/*.d
 	rm -f $(BIN_DIR)/$(PROJECT).elf $(BIN_DIR)/$(PROJECT).bin \
 	      $(BIN_DIR)/$(PROJECT).hex $(BIN_DIR)/$(PROJECT).map

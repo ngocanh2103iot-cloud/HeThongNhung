@@ -1,0 +1,5 @@
+arm-none-eabi-gcc Build/main.o Build/system_stm32f1xx.o Build/Common/DELAY/delay.o Build/Common/DMA_UART/dma_uart.o Build/Common/I2C/i2c.o Build/Common/SPI/spi.o Build/Common/UART/uart.o Build/startup_stm32f103xb.o -mcpu=cortex-m3 -mthumb -TLinker/STM32F103C8.ld -nostdlib -Wl,--gc-sections -Wl,-Map=Bin/stm32.map -o Bin/stm32.elf
+/usr/lib/gcc/arm-none-eabi/13.2.1/../../../arm-none-eabi/bin/ld: Build/main.o: in function `main':
+/home/nale/WorkSpace/STM32/HeThongNhung/Ex3/Bai3/Src/main.c:42:(.text.startup.main+0x60): undefined reference to `snprintf'
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:42: Bin/stm32.elf] Error 1
