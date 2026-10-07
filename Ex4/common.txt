@@ -1,0 +1,14 @@
+Task và Scheduler
+Context switch
+Task state: Running / Ready / Blocked / Suspended
+Priority, preemption và time slicing
+vTaskDelay() và tick
+xTaskCreate(), stack và TCB
+Queue — truyền dữ liệu giữa task
+Binary semaphore — đồng bộ sự kiện
+Mutex — bảo vệ tài nguyên
+Interrupt + FreeRTOS (FromISR)
+Task notification
+Software timer / Event group
+Heap và quản lý RAM
+Ghép FreeRTOS với UART / ADC / DMA / I2C trên STM32
