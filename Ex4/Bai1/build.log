@@ -1,0 +1,112 @@
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -DSTM32F103xB -ISrc -ILib/STM32CubeF1/Drivers/CMSIS/Include -ILib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include -ILib/FreeRTOS-Kernel/include -ILib/FreeRTOS-Kernel/portable/GCC/ARM_CM3 -std=gnu11 -O2 -g3 -Wall -Wextra -ffreestanding -ffunction-sections -fdata-sections -MMD -MP -c Src/main.c -o Build/main.o
+Src/main.c: In function 'GPIO_Init':
+Src/main.c:11:9: error: stray '#' in program
+   11 |     );  #include "stm32f1xx.h"
+      |         ^
+Src/main.c:11:10: error: 'include' undeclared (first use in this function)
+   11 |     );  #include "stm32f1xx.h"
+      |          ^~~~~~~
+Src/main.c:11:10: note: each undeclared identifier is reported only once for each function it appears in
+Src/main.c:11:17: error: expected ';' before string constant
+   11 |     );  #include "stm32f1xx.h"
+      |                 ^~~~~~~~~~~~~~
+      |                 ;
+Src/main.c: In function 'LedToggleTask':
+Src/main.c:37:4: error: unknown type name 'Led_ts'
+   37 |    Led_ts *ts = (Led_ts *)pvParameters;
+      |    ^~~~~~
+Src/main.c:37:18: error: 'Led_ts' undeclared (first use in this function)
+   37 |    Led_ts *ts = (Led_ts *)pvParameters;
+      |                  ^~~~~~
+Src/main.c:37:26: error: expected expression before ')' token
+   37 |    Led_ts *ts = (Led_ts *)pvParameters;
+      |                          ^
+Src/main.c:38:16: error: request for member 'f' in something not a structure or union
+   38 |    float f = ts->f;
+      |                ^~
+Src/main.c:41:11: error: request for member 'port' in something not a structure or union
+   41 |         ts->port->ODR ^= ts->pin;
+      |           ^~
+Src/main.c:41:28: error: request for member 'pin' in something not a structure or union
+   41 |         ts->port->ODR ^= ts->pin;
+      |                            ^~
+Src/main.c:36:26: warning: unused parameter 'pvParameters' [-Wunused-parameter]
+   36 | void LedToggleTask(void *pvParameters){
+      |                    ~~~~~~^~~~~~~~~~~~
+Src/main.c: In function 'GPIO_Init':
+Src/main.c:45:8: error: unknown type name 'Led_ts'
+   45 | static Led_ts led1 = {GPIOA, (1 << 0), 0.1};
+      |        ^~~~~~
+In file included from Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h:130,
+                 from Src/main.c:1:
+Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:664:29: warning: initialization of 'int' from 'GPIO_TypeDef *' makes integer from pointer without a cast [-Wint-conversion]
+  664 | #define GPIOA               ((GPIO_TypeDef *)GPIOA_BASE)
+      |                             ^
+Src/main.c:45:23: note: in expansion of macro 'GPIOA'
+   45 | static Led_ts led1 = {GPIOA, (1 << 0), 0.1};
+      |                       ^~~~~
+Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:664:29: note: (near initialization for 'led1')
+  664 | #define GPIOA               ((GPIO_TypeDef *)GPIOA_BASE)
+      |                             ^
+Src/main.c:45:23: note: in expansion of macro 'GPIOA'
+   45 | static Led_ts led1 = {GPIOA, (1 << 0), 0.1};
+      |                       ^~~~~
+Src/main.c:45:30: warning: excess elements in scalar initializer
+   45 | static Led_ts led1 = {GPIOA, (1 << 0), 0.1};
+      |                              ^
+Src/main.c:45:30: note: (near initialization for 'led1')
+Src/main.c:45:40: warning: excess elements in scalar initializer
+   45 | static Led_ts led1 = {GPIOA, (1 << 0), 0.1};
+      |                                        ^~~
+Src/main.c:45:40: note: (near initialization for 'led1')
+Src/main.c:46:8: error: unknown type name 'Led_ts'
+   46 | static Led_ts led2 = {GPIOA, (1 << 1), 1.0};
+      |        ^~~~~~
+Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:664:29: warning: initialization of 'int' from 'GPIO_TypeDef *' makes integer from pointer without a cast [-Wint-conversion]
+  664 | #define GPIOA               ((GPIO_TypeDef *)GPIOA_BASE)
+      |                             ^
+Src/main.c:46:23: note: in expansion of macro 'GPIOA'
+   46 | static Led_ts led2 = {GPIOA, (1 << 1), 1.0};
+      |                       ^~~~~
+Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:664:29: note: (near initialization for 'led2')
+  664 | #define GPIOA               ((GPIO_TypeDef *)GPIOA_BASE)
+      |                             ^
+Src/main.c:46:23: note: in expansion of macro 'GPIOA'
+   46 | static Led_ts led2 = {GPIOA, (1 << 1), 1.0};
+      |                       ^~~~~
+Src/main.c:46:30: warning: excess elements in scalar initializer
+   46 | static Led_ts led2 = {GPIOA, (1 << 1), 1.0};
+      |                              ^
+Src/main.c:46:30: note: (near initialization for 'led2')
+Src/main.c:46:40: warning: excess elements in scalar initializer
+   46 | static Led_ts led2 = {GPIOA, (1 << 1), 1.0};
+      |                                        ^~~
+Src/main.c:46:40: note: (near initialization for 'led2')
+Src/main.c:47:8: error: unknown type name 'Led_ts'
+   47 | static Led_ts led3 = {GPIOA, (1 << 2), 10.0};
+      |        ^~~~~~
+Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:664:29: warning: initialization of 'int' from 'GPIO_TypeDef *' makes integer from pointer without a cast [-Wint-conversion]
+  664 | #define GPIOA               ((GPIO_TypeDef *)GPIOA_BASE)
+      |                             ^
+Src/main.c:47:23: note: in expansion of macro 'GPIOA'
+   47 | static Led_ts led3 = {GPIOA, (1 << 2), 10.0};
+      |                       ^~~~~
+Lib/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:664:29: note: (near initialization for 'led3')
+  664 | #define GPIOA               ((GPIO_TypeDef *)GPIOA_BASE)
+      |                             ^
+Src/main.c:47:23: note: in expansion of macro 'GPIOA'
+   47 | static Led_ts led3 = {GPIOA, (1 << 2), 10.0};
+      |                       ^~~~~
+Src/main.c:47:30: warning: excess elements in scalar initializer
+   47 | static Led_ts led3 = {GPIOA, (1 << 2), 10.0};
+      |                              ^
+Src/main.c:47:30: note: (near initialization for 'led3')
+Src/main.c:47:40: warning: excess elements in scalar initializer
+   47 | static Led_ts led3 = {GPIOA, (1 << 2), 10.0};
+      |                                        ^~~~
+Src/main.c:47:40: note: (near initialization for 'led3')
+Src/main.c: At top level:
+Src/main.c:48:5: warning: 'main' defined but not used [-Wunused-function]
+   48 | int main(){
+      |     ^~~~
+make: *** [Makefile:49: Build/main.o] Error 1
